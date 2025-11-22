@@ -1,0 +1,11 @@
+{
+  "name": "Taalimia",
+  "short_name": "Taalimia",
+  "description": "Laboratoires virtuels immersifs, IA éducative et collaboration en temps réel.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#0a1630",
+  "background_color": "#0a1630",
+  "lang": "fr"
+}

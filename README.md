@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="./public/globe.svg" alt="Taalimia" width="120" />
+</p>
 
-## Getting Started
+# Taalimia — Plateforme de laboratoires virtuels
 
-First, run the development server:
+Taalimia est une application Next.js moderne qui combine simulations 3D immersives, collaboration temps réel, analytics pédagogiques et intelligence artificielle pour révolutionner l'enseignement scientifique.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🧩 Stack technique
+
+- **Framework** : Next.js 16 (App Router, Server Components)
+- **UI** : Tailwind CSS 4, Shadcn UI, thèmes clair/sombre
+- **3D** : React Three Fiber + Drei
+- **Auth** : NextAuth.js (Credentials + MongoDB Adapter)
+- **Base de données** : MongoDB (driver officiel, sans Mongoose)
+- **Formulaires** : React Hook Form + Zod
+- **Feedback UX** : Sonner, animations Tailwind
+
+## 🚀 Fonctionnalités clés
+
+- Landing page premium présentant les 12 piliers pédagogiques (simulations, IA, collaboration…)
+- Espace d’authentification personnalisé (inscription/connexion) avec rôles `student`, `teacher`, `admin`
+- Tableau de bord enseignant : statistiques, recommandations IA, certifications, collaborations, ressources
+- Modules dédiés aux simulations 3D, laboratoires virtuels, ressources pédagogiques et collaborations
+- APIs REST (`/api/*`) fournissant données d’exemple pour simulations, analytics, évaluations, communauté…
+- Intégration MongoDB avec seed automatique des contenus de base
+- Middleware de protection des routes (`/dashboard`, `/teacher`, `/student`, `/admin`)
+- Pages publiques sur les ressources et la communauté scientifique
+
+## 📂 Structure principale
+
+```
+src/
+  app/
+    auth/            # Pages d'authentification (login/register)
+    dashboard/       # Expérience enseignant avec sous-sections
+    api/             # Routes API (simulations, collaborations, IA, etc.)
+    community/       # Présentation de la communauté Taalimia
+    resources/       # Bibliothèque pédagogique publique
+  components/
+    auth/            # Formulaires et carte d'auth
+    dashboard/       # Widgets de tableau de bord
+    landing/         # Sections marketing
+    three/           # Scène 3D immersive
+    ui/              # Composants Shadcn UI
+  lib/
+    data/            # Seeds et helpers simulant le back-office
+    env.ts           # Validation Zod des variables d'env
+    mongodb.ts       # Connexion MongoDB (sans Mongoose)
+    auth.ts          # Configuration NextAuth
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚙️ Pré-requis
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js 18+
+- Base MongoDB accessible (locale ou Atlas)
+- Variables d’environnement configurées (voir `.env.example`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ▶️ Démarrage rapide
 
-## Learn More
+```bash
+cp env.example .env.local   # Renseignez votre URI MongoDB + NEXTAUTH_SECRET
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Rendez-vous sur `http://localhost:3000` pour découvrir l’expérience complète.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Script de création d'admin
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# crée ou met à jour un compte administrateur (valeurs par défaut univ-setif.dz)
+npm run create:admin
 
-## Deploy on Vercel
+# personnaliser email/mot de passe
+npm run create:admin -- --email direction@univ-setif.dz --password "MonPass#2025"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ✅ Tests à réaliser
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Inscription via `/auth/register` puis connexion `/auth/login`
+- Accès au tableau de bord `/dashboard` (protégé par middleware NextAuth)
+- Consultation des pages publiques `/resources` et `/community`
+- Vérification des APIs (ex. `GET /api/simulations`)
+
+### Comptes de démonstration
+
+| Rôle      | Email                      | Mot de passe        |
+|-----------|---------------------------|---------------------|
+| Admin     | `admin@univ-setif.dz`     | `Taalimia#2025`   |
+| Enseignant| `enseignant@univ-setif.dz`| `Taalimia#2025`   |
+| Étudiant  | `etudiant@univ-setif.dz`  | `Taalimia#2025`   |
+
+## 📌 Prochaines pistes d’évolution
+
+- Ajout d’une véritable persistance en temps réel (Pusher, WebRTC…)
+- Implémentation du mode VR et des simulations 3D avancées
+- Génération automatique de certificats PDF/Badge
+- Intégration LMS (Moodle, Classroom) via LTI
+
+---
+
+Made with ❤️ pour l’enseignement scientifique immersif.

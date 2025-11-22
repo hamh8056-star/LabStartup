@@ -1,0 +1,435 @@
+================================================================================
+FONCTIONNALITÉS GLOBALES DE L'APPLICATION LABSTARTUP (TAALIMIA)
+================================================================================
+
+1. AUTHENTIFICATION ET GESTION DES UTILISATEURS
+------------------------------------------------
+- Inscription de nouveaux utilisateurs
+- Connexion sécurisée avec NextAuth.js
+- Récupération de mot de passe par email
+- Réinitialisation de mot de passe
+- 3 rôles utilisateurs : Étudiant, Enseignant, Administrateur
+- Gestion des sessions utilisateur
+- Protection des routes par middleware
+- Comptes de démonstration pré-configurés
+
+2. PAGE D'ACCUEIL (LANDING PAGE)
+---------------------------------
+- Section Hero avec présentation de la plateforme
+- Scène 3D interactive du laboratoire virtuel
+- Statistiques en temps réel (150+ simulations, 80+ institutions, 12k certifications)
+- Grille de 12 fonctionnalités principales
+- Appel à l'action (CTA) avec boutons d'inscription/connexion
+- Footer avec liens légaux et réseaux sociaux
+- Design responsive (mobile, tablette, desktop)
+- Support multilingue (FR, EN, AR)
+
+3. TABLEAU DE BORD PRINCIPAL
+-----------------------------
+- Vue d'ensemble personnalisée selon le rôle
+- 4 cartes statistiques :
+  * Simulations disponibles
+  * Classes actives cette semaine
+  * Certifications délivrées
+  * Engagement moyen
+- Timeline de performance avec graphiques
+- Recommandations IA personnalisées
+- Prochaines sessions de collaboration
+- Ressources pédagogiques en vedette
+- Évaluations récentes
+- Vue analytique avec taux de réussite
+
+4. LABORATOIRES VIRTUELS 3D
+----------------------------
+3 laboratoires professionnels disponibles :
+
+A. LABORATOIRE DE BIOLOGIE
+- 100+ objets 3D réalistes (mobilier, verrerie, équipements)
+- 7 instruments interactifs :
+  1. Microscope (magnification, focus, lumière)
+  2. Incubateur CO₂ (température, humidité, CO₂)
+  3. Centrifugeuse (vitesse, temps, température)
+  4. Autoclave (température, pression, temps)
+  5. Balance analytique (poids, tare, unité)
+  6. pH-mètre (pH, température)
+  7. Spectrophotomètre (longueur d'onde, absorbance)
+- Textures générées par IA (sol époxy, murs, bois, métal)
+- 4 grandes fenêtres avec vue extérieure réaliste
+- Lumière naturelle volumétrique
+- Équipements de sécurité complets
+- 50+ pièces de verrerie avec solutions colorées
+
+B. LABORATOIRE DE PHYSIQUE
+- 5 instruments interactifs :
+  1. Laser He-Ne (longueur d'onde, puissance)
+  2. Oscilloscope (affichage temps réel)
+  3. Électroaimant (intensité, champ magnétique)
+  4. Pendule (longueur, amplitude, période)
+  5. Voltmètre (tension, courant)
+- Textures IA (sol industriel, murs gris)
+- 4 fenêtres avec vue extérieure
+- Faisceau laser visible et réactif
+- Planche optique avec supports
+- Mobilier technique complet
+
+C. LABORATOIRE DE CHIMIE
+- 5 instruments interactifs :
+  1. Bec Bunsen (intensité flamme, température)
+  2. Burette de titrage (volume, pH avec couleur dynamique)
+  3. Agitateur magnétique (vitesse, température)
+  4. Hotte aspirante (débit d'air, température)
+  5. Thermomètre numérique (température, pression)
+- Textures IA (sol époxy, murs jaunes sécurité)
+- Hotte aspirante 3m avec vitre et extraction
+- 6 béchers avec solutions colorées
+- Système de titrage avec indicateur pH coloré
+- Équipements sécurité complets
+
+FONCTIONNALITÉS COMMUNES AUX LABORATOIRES :
+- Navigation 3D (souris/clavier)
+- Instruments interactifs avec sliders
+- Affichage données temps réel
+- Environnement immersif (skybox HDRI)
+- Mode collaboration multi-utilisateurs
+- Contrôles de caméra avancés
+
+5. SIMULATIONS 3D
+-----------------
+- Bibliothèque de simulations par discipline :
+  * Physique (optique, mécanique, électromagnétisme)
+  * Chimie (réactions, équilibres, synthèses)
+  * Biologie (cellules, génétique, physiologie)
+  * Électronique (circuits, amplificateurs)
+  * Informatique (algorithmes, structures de données)
+- Filtres par discipline, difficulté, durée
+- Détails : objectifs, prérequis, durée estimée
+- Assets 3D : modèles, vidéos, documents
+- Navigation et recherche avancée
+
+6. COLLABORATION EN TEMPS RÉEL
+-------------------------------
+- Création de salles de collaboration
+- Gestion des membres (enseignants/étudiants)
+- Statut en ligne/hors ligne/en simulation
+- Chat en temps réel (messages texte)
+- Partage d'écran (simulation, tableau, résultats)
+- Groupes de travail (breakout rooms)
+- Canal vocal (communication audio)
+- Notes partagées (annotations collaboratives)
+- Historique des sessions
+- Gestion des salles actives/planifiées
+
+7. ASSISTANT IA PÉDAGOGIQUE
+----------------------------
+- Recommandations personnalisées :
+  * Pour enseignants : Analyse formative, suggestions de ressources
+  * Pour étudiants : Prochaines expériences, révisions ciblées
+- Diagnostics de performance
+- Suggestions d'actions (prochaines étapes)
+- Niveau de confiance des recommandations
+- Tuteur virtuel intelligent
+- Analyse des erreurs
+
+8. ÉVALUATIONS ET QUIZ
+----------------------
+- Quiz pré-simulation (évaluation des connaissances initiales)
+- Quiz post-simulation (évaluation des acquis)
+- Questions à choix multiples
+- Explications détaillées pour chaque réponse
+- Système de points et scoring
+- Suivi des performances :
+  * Score pré-quiz
+  * Score post-quiz
+  * Taux de complétion
+  * Temps moyen par tentative
+- Statuts : En attente, Complété, Certifié
+- Rubriques d'évaluation
+- Historique des tentatives
+- Barèmes automatiques
+
+9. CERTIFICATIONS
+-----------------
+- 3 niveaux de badges :
+  * Explorateur (niveau débutant)
+  * Innovateur (niveau intermédiaire)
+  * Mentor (niveau avancé)
+- Seuils de score définis par badge
+- Émission automatique après réussite d'évaluation
+- Historique des certifications obtenues
+- Export PDF/Badge numérique
+- Certificats vérifiables
+
+10. RESSOURCES PÉDAGOGIQUES
+----------------------------
+- Types de ressources :
+  * Fiches (guides pratiques)
+  * Manuels (contenus structurés)
+  * Vidéos (démonstrations)
+  * Animations (visualisations interactives)
+  * Exercices (pratique guidée)
+- Filtres par discipline, niveau (collège/lycée/université), format
+- Pièces jointes : PDF, modules, datasets, slides, templates
+- Manuels interactifs :
+  * Sections structurées
+  * Prérequis
+  * Consignes de sécurité
+  * Quiz formatifs
+- Vidéos :
+  * Chapitres avec timecodes
+  * Sous-titres multilingues
+  * Téléchargement
+- Exercices :
+  * Difficulté (facile/intermédiaire/avancé)
+  * Système de scoring
+  * Seuil de réussite
+- Bibliothèque complète avec recherche
+
+11. ESPACE ENSEIGNANT
+---------------------
+- Gestion de classes :
+  * Création de classes
+  * Ajout d'étudiants
+  * Attribution de simulations
+- Devoirs :
+  * Création d'assignations
+  * Dates limites
+  * Suivi des soumissions
+- Analytics :
+  * Performance des étudiants
+  * Taux de complétion
+  * Statistiques par simulation
+- Ressources pédagogiques personnelles
+- Tableau de bord dédié
+
+12. ANALYTICS ET STATISTIQUES
+------------------------------
+- Résumé analytique :
+  * Utilisateurs actifs
+  * Simulations complétées
+  * Temps moyen par session
+  * Taux d'engagement
+- Timeline de performance (graphiques d'évolution)
+- Export de données (CSV, JSON)
+- Filtres : période, discipline, utilisateur
+- Rapports exportables
+- Insights actionnables
+
+13. CRÉATEUR DE CONTENU
+-----------------------
+- Création d'expériences :
+  * Éditeur de simulations
+  * Intégration d'assets 3D
+  * Configuration d'instruments
+- Publication de contenus
+- Gestion : modification, suppression
+- Statistiques d'utilisation
+- Bibliothèque d'assets 3D
+- Validation automatique des consignes de sécurité
+- Prévisualisation VR instantanée
+
+14. COMMUNAUTÉ
+--------------
+- Projets communautaires :
+  * Partage de simulations
+  * Collaboration sur contenus
+  * Feedback et évaluations
+- Forum intégré par discipline
+- Ressources partagées (bibliothèque communautaire)
+- Classements et concours
+- Réseau scientifique
+
+15. ACCESSIBILITÉ
+-----------------
+- Paramètres d'accessibilité :
+  * Contraste élevé
+  * Taille de police ajustable
+  * Navigation au clavier
+  * Support lecteur d'écran
+- Sous-titres pour vidéos
+- Transcriptions pour audio
+- Mode daltonien (adaptation des couleurs)
+- Compatibilité multiplateforme (PC, tablette, mobile, VR)
+- Mode hors ligne
+
+16. SÉCURITÉ
+------------
+- Gestion des clés API :
+  * Création, révocation
+  * Permissions granulaires
+- Logs d'audit :
+  * Historique des actions
+  * Connexions
+  * Modifications
+- Sauvegardes :
+  * Planification automatique
+  * Restauration
+- Surveillance et alertes de sécurité
+- Authentification sécurisée (NextAuth.js)
+- Hash bcrypt pour mots de passe
+- Protection CSRF
+
+17. ADMINISTRATION
+------------------
+- Gestion des utilisateurs :
+  * Création, modification, suppression
+  * Attribution de rôles
+  * Réinitialisation de mots de passe
+- Gestion du contenu :
+  * Modération des ressources
+  * Validation des simulations
+- Configuration système :
+  * Paramètres généraux
+  * Intégrations LMS
+  * Maintenance
+- Tableau de bord administrateur
+
+18. INTERNATIONALISATION (i18n)
+--------------------------------
+- 3 langues supportées :
+  * Français (par défaut)
+  * Anglais
+  * Arabe
+- Sélecteur de langue dans le header
+- Traduction complète de l'interface
+- Traduction des contenus
+
+19. THÈMES
+----------
+- Mode clair (interface lumineuse)
+- Mode sombre (interface sombre)
+- Toggle dans le header
+- Persistance de la préférence
+- Adaptation automatique
+
+20. NAVIGATION ET INTERFACE
+----------------------------
+- Header global avec :
+  * Logo Taalimia
+  * Menu navigation (Features, Dashboard, Resources, Community)
+  * Sélecteur de langue
+  * Toggle thème clair/sombre
+  * Bouton connexion/inscription
+  * Menu utilisateur (profil, déconnexion)
+- Sidebar collapsible dans le dashboard
+- Topbar avec recherche globale
+- Notifications
+- Calendrier pédagogique
+
+21. APIS REST
+-------------
+Routes API disponibles :
+- /api/simulations : Liste des simulations
+- /api/labs : Liste des laboratoires
+- /api/resources : Ressources pédagogiques
+- /api/evaluations : Évaluations
+- /api/certifications : Certifications
+- /api/collaborations : Salles de collaboration
+- /api/ai/recommendations : Recommandations IA
+- /api/analytics : Données analytiques
+- /api/auth/* : Authentification
+- /api/profile : Profil utilisateur
+- /api/security/* : Sécurité
+
+22. BASE DE DONNÉES MONGODB
+----------------------------
+Collections :
+- users : Utilisateurs et authentification
+- labs : Laboratoires virtuels
+- simulations : Simulations 3D
+- resources : Ressources pédagogiques
+- evaluations : Quiz et évaluations
+- certifications : Certifications et badges
+- collaborations : Salles de collaboration
+- analytics : Données analytiques
+
+23. SCRIPTS UTILITAIRES
+-----------------------
+- npm run create:user : Créer un utilisateur admin
+- npm run seed:defaults : Seed des utilisateurs par défaut
+- npm run clean:labs : Nettoyer et réinitialiser les laboratoires
+
+24. PAGES PUBLIQUES
+-------------------
+- / : Page d'accueil
+- /auth/login : Connexion
+- /auth/register : Inscription
+- /auth/forgot-password : Mot de passe oublié
+- /auth/reset-password : Réinitialisation
+- /resources : Bibliothèque pédagogique publique
+- /community : Présentation de la communauté
+
+25. PAGES PROTÉGÉES (DASHBOARD)
+--------------------------------
+- /dashboard : Tableau de bord principal
+- /dashboard/simulations : Simulations 3D
+- /dashboard/labs : Laboratoires virtuels
+- /dashboard/labs/[id]/vr : Vue VR d'un laboratoire
+- /dashboard/teacher : Espace enseignant
+- /dashboard/evaluations : Évaluations
+- /dashboard/certifications : Certifications
+- /dashboard/resources : Ressources pédagogiques
+- /dashboard/collaboration : Collaboration
+- /dashboard/assistant : Assistant IA
+- /dashboard/analytics : Analytics
+- /dashboard/creator : Créateur de contenu
+- /dashboard/community : Communauté
+- /dashboard/accessibility : Accessibilité
+- /dashboard/security : Sécurité (Admin)
+- /dashboard/admin : Administration (Admin)
+- /dashboard/profile : Profil utilisateur
+
+26. FONCTIONNALITÉS TECHNIQUES
+-------------------------------
+- Framework : Next.js 16 (App Router, Server Components)
+- UI : Tailwind CSS 4, Shadcn UI
+- 3D : React Three Fiber + Drei (Three.js)
+- Authentification : NextAuth.js
+- Base de données : MongoDB
+- Formulaires : React Hook Form + Zod
+- Validation : Zod schemas
+- Protection des routes : Middleware Next.js
+- Service Worker : Mode hors ligne
+- PWA : Installation en mode application
+
+27. PERFORMANCE ET OPTIMISATION
+--------------------------------
+- Server Components pour performance
+- Lazy loading des composants 3D
+- Optimisation des images
+- Cache intelligent
+- Code splitting automatique
+- Optimisation des bundles
+
+28. EXPÉRIENCE UTILISATEUR
+---------------------------
+- Design moderne et intuitif
+- Animations fluides
+- Feedback visuel (toasts, notifications)
+- Responsive design (mobile-first)
+- Accessibilité WCAG
+- Navigation intuitive
+- Recherche globale
+- Filtres avancés
+
+================================================================================
+RÉSUMÉ : 28 CATÉGORIES DE FONCTIONNALITÉS
+================================================================================
+
+L'application LabStartup (Taalimia) est une plateforme complète de laboratoires
+virtuels 3D avec :
+- 3 laboratoires professionnels (Biologie, Physique, Chimie)
+- 17+ instruments interactifs au total
+- 100+ objets 3D réalistes
+- Collaboration en temps réel
+- IA pédagogique
+- Système d'évaluation complet
+- Certifications et badges
+- Analytics avancés
+- Multilingue (FR, EN, AR)
+- Accessible sur tous les appareils (PC, tablette, mobile, VR)
+
+Made with ❤️ pour l'enseignement scientifique immersif.
+
+
+
+

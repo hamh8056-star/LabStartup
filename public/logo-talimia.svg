@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 160" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Talimia Lab DZ</title>
+  <desc id="logoDesc">Lettrage TALIMIA bleu avec cartouche LAB DZ assorti</desc>
+  <defs>
+    <style>
+      .brand-text{fill:#ffffff;font:bold 72px "Montserrat","Arial Black","Segoe UI",sans-serif;letter-spacing:6px;}
+      .label-bg{fill:#186fbe;}
+      .label-text{fill:#ffffff;font:bold 58px "Montserrat","Arial Black","Segoe UI",sans-serif;letter-spacing:4px;}
+    </style>
+  </defs>
+  <g transform="translate(0,15)">
+    <text class="brand-text" x="10" y="70">TALIMIA</text>
+    <rect class="label-bg" x="20" y="85" width="260" height="75" rx="4" />
+    <text class="label-text" x="40" y="138">LAB DZ</text>
+  </g>
+</svg>
+
+
