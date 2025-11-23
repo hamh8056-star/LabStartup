@@ -1,21 +1,36 @@
 import { ObjectId } from "mongodb"
 
-import { getDatabase } from "@/lib/mongodb"
+import { getDatabase, dateToISOString } from "@/lib/mongodb"
 import { getSampleEvaluations, type EvaluationTemplate } from "@/lib/data/evaluations"
 import { getSampleCertifications } from "@/lib/data/certifications"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
  */
-function idToString(id: ObjectId | string | undefined | null): string {
+function idToString(id: ObjectId | string | undefined | null | any): string {
   if (!id) {
     return ""
   }
   if (typeof id === "string") {
     return id
   }
-  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
-    return id.toHexString()
+  if (id && typeof id === "object") {
+    // Check if it's a MongoDB ObjectId with toHexString method
+    if (typeof id.toHexString === "function") {
+      try {
+        return id.toHexString()
+      } catch {
+        // Fall through to other checks
+      }
+    }
+    // Handle serialized ObjectId (from Next.js serialization)
+    if (id.$oid) {
+      return id.$oid
+    }
+    // Handle ObjectId-like objects with id property
+    if (id.id && Buffer.isBuffer(id.id)) {
+      return id.id.toString("hex")
+    }
   }
   // Fallback: convertir en chaîne
   return String(id)
@@ -250,7 +265,7 @@ export async function getEvaluationSummaries(): Promise<EvaluationSummary[]> {
       status: template.status,
       issuedCertId: cert?.id ?? template.issuedCertId,
       participants: (participantCount ?? template.participants) ?? 0,
-      lastSubmissionAt: (postData?.lastSubmissionAt ?? preData?.lastSubmissionAt)?.toISOString() ?? template.lastSubmissionAt,
+      lastSubmissionAt: (postData?.lastSubmissionAt ?? preData?.lastSubmissionAt) ? dateToISOString(postData?.lastSubmissionAt ?? preData?.lastSubmissionAt) : template.lastSubmissionAt,
       averageTime: postData?.averageDuration ? Math.round((postData.averageDuration ?? 0) / 60) : template.averageTime,
       rubric: template.rubric,
       quiz: template.quiz,
@@ -287,12 +302,13 @@ export async function getEvaluationHistory(evaluationId: string, options?: { pag
   const participantMap = new Map<string, EvaluationParticipantSummary>()
 
   allAttempts.forEach(attempt => {
-    if (!participantMap.has(attempt.userId) || participantMap.get(attempt.userId)!.lastAttemptAt < attempt.createdAt.toISOString()) {
+    const attemptDate = dateToISOString(attempt.createdAt)
+    if (!participantMap.has(attempt.userId) || participantMap.get(attempt.userId)!.lastAttemptAt < attemptDate) {
       participantMap.set(attempt.userId, {
         userId: attempt.userId,
         userName: attempt.userName,
         lastScore: attempt.score,
-        lastAttemptAt: attempt.createdAt.toISOString(),
+        lastAttemptAt: attemptDate,
       })
     }
   })
@@ -308,7 +324,7 @@ export async function getEvaluationHistory(evaluationId: string, options?: { pag
       answers: attempt.answers,
       badgesAwarded: attempt.badgesAwarded,
       pointsAwarded: attempt.pointsAwarded,
-      createdAt: attempt.createdAt.toISOString(),
+      createdAt: dateToISOString(attempt.createdAt),
       userId: attempt.userId,
       userName: attempt.userName,
     })),
@@ -444,7 +460,7 @@ export async function listCertifications() {
     email: doc.email,
     badge: doc.badge,
     score: doc.score,
-    issuedAt: doc.issuedAt.toISOString(),
+    issuedAt: dateToISOString(doc.issuedAt),
     discipline: doc.discipline,
   }))
 }

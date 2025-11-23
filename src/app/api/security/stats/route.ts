@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
-import { getDatabase } from "@/lib/mongodb"
+import { getDatabase, dateToISOString } from "@/lib/mongodb"
 
 export const dynamic = "force-dynamic"
 
@@ -52,7 +52,7 @@ export async function GET() {
         totalAuditLogs,
         criticalLogs,
         recentBackups,
-        lastBackup: lastBackup?.completedAt?.toISOString() || lastBackup?.createdAt?.toISOString(),
+        lastBackup: lastBackup?.completedAt ? dateToISOString(lastBackup.completedAt) : (lastBackup?.createdAt ? dateToISOString(lastBackup.createdAt) : undefined),
       },
     })
   } catch (error) {
