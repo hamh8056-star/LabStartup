@@ -13,7 +13,9 @@
     "lint": "eslint",
     "create:user": "node scripts/create-admin-user.mjs",
     "seed:defaults": "node scripts/seed-default-users.mjs",
-    "clean:labs": "node scripts/clean-labs.mjs"
+    "clean:labs": "node scripts/clean-labs.mjs",
+    "export:db": "node scripts/export-database.mjs",
+    "import:db": "node scripts/import-database.mjs"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.1",

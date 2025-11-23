@@ -3,6 +3,20 @@ import { ObjectId } from "mongodb"
 import { getDatabase } from "@/lib/mongodb"
 import type { CollaborationRoom as SampleRoom } from "@/lib/data/collaboration"
 
+/**
+ * Convertit un roomId (ObjectId ou string) en chaîne de caractères
+ */
+function roomIdToString(roomId: ObjectId | string): string {
+  if (typeof roomId === "string") {
+    return roomId
+  }
+  if (roomId && typeof roomId === "object" && "toHexString" in roomId) {
+    return roomId.toHexString()
+  }
+  // Fallback: convertir en chaîne
+  return String(roomId)
+}
+
 export type DbCollaborationRoom = {
   _id: ObjectId
   title: string
@@ -143,7 +157,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
 
   const membersByRoom = new Map<string, DbCollaborationMember[]>()
   members.forEach(member => {
-    const key = member.roomId.toHexString()
+    const key = roomIdToString(member.roomId)
     if (!membersByRoom.has(key)) {
       membersByRoom.set(key, [])
     }
@@ -152,7 +166,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
 
   const messagesByRoom = new Map<string, DbCollaborationMessage[]>()
   messages.forEach(message => {
-    const key = message.roomId.toHexString()
+    const key = roomIdToString(message.roomId)
     if (!messagesByRoom.has(key)) {
       messagesByRoom.set(key, [])
     }
@@ -161,7 +175,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
 
   const sharesByRoom = new Map<string, DbScreenShare[]>()
   shares.forEach(share => {
-    const key = share.roomId.toHexString()
+    const key = roomIdToString(share.roomId)
     if (!sharesByRoom.has(key)) {
       sharesByRoom.set(key, [])
     }
@@ -170,7 +184,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
 
   const groupsByRoom = new Map<string, DbBreakoutGroup[]>()
   groups.forEach(group => {
-    const key = group.roomId.toHexString()
+    const key = roomIdToString(group.roomId)
     if (!groupsByRoom.has(key)) {
       groupsByRoom.set(key, [])
     }
@@ -179,7 +193,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
 
   const requestsByRoom = new Map<string, DbCollaborationJoinRequest[]>()
   pendingRequests.forEach(request => {
-    const key = request.roomId.toHexString()
+    const key = roomIdToString(request.roomId)
     if (!requestsByRoom.has(key)) {
       requestsByRoom.set(key, [])
     }

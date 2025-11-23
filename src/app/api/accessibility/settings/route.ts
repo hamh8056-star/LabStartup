@@ -5,6 +5,8 @@ import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { getUserAccessibilitySettings, updateUserAccessibilitySettings } from "@/lib/accessibility-db"
 
+export const dynamic = "force-dynamic"
+
 const updateSettingsSchema = z.object({
   language: z.enum(["fr", "en", "ar"]).optional(),
   fontSize: z.enum(["small", "medium", "large", "xlarge"]).optional(),

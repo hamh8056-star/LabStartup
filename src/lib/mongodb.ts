@@ -1,6 +1,6 @@
 import { MongoClient, type Db, type MongoClientOptions } from "mongodb"
 
-import { getEnv } from "@/lib/env"
+import { getEnv, extractDatabaseName } from "@/lib/env"
 
 declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined
@@ -24,6 +24,8 @@ export function getMongoClient(): Promise<MongoClient> {
 
 export async function getDatabase(): Promise<Db> {
   const mongoClient = await getMongoClient()
-  return mongoClient.db(env.MONGODB_DB)
+  // Extraire le nom de la base directement depuis l'URI
+  const dbName = extractDatabaseName(env.MONGODB_URI)
+  return mongoClient.db(dbName)
 }
 

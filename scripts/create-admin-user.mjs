@@ -89,19 +89,35 @@ async function main() {
   }
 
   const mongoUri = process.env.MONGODB_URI
-  const mongoDbName = process.env.MONGODB_DB
 
-  if (!mongoUri || !mongoDbName) {
-    console.error("❌ MONGODB_URI et MONGODB_DB doivent être définis (vérifiez votre fichier .env.local ou .env).")
+  if (!mongoUri) {
+    console.error("❌ MONGODB_URI doit être défini (vérifiez votre fichier .env.local ou .env).")
     if (!envLoaded) {
       console.error("ℹ️  Aucun fichier .env*. localisé automatiquement. Placez vos variables dans .env.local à la racine du projet.")
     } else {
-      console.error("ℹ️  Fichier environnement chargé mais variables manquantes. Assurez-vous des lignes suivantes :")
+      console.error("ℹ️  Fichier environnement chargé mais variable manquante. Assurez-vous de la ligne suivante :")
       console.error("    MONGODB_URI=mongodb://<utilisateur>:<motdepasse>@<hôte>:<port>/<database>")
-      console.error("    MONGODB_DB=taalimia")
+      console.error("    ou")
+      console.error("    MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority")
     }
     process.exit(1)
   }
+
+  // Extraire le nom de la base depuis l'URI
+  function extractDatabaseName(uri) {
+    try {
+      const url = new URL(uri);
+      const pathname = url.pathname;
+      const dbName = pathname.split('/').filter(p => p)[0];
+      if (dbName) return dbName;
+    } catch (error) {
+      const match = uri.match(/\/([^\/\?]+)(?:\?|$)/);
+      if (match && match[1] && match[1] !== '') return match[1];
+    }
+    return process.env.MONGODB_DB || 'taalimia'; // Fallback
+  }
+
+  const mongoDbName = extractDatabaseName(mongoUri)
 
 const role = (args.role ?? "admin").toLowerCase()
 
