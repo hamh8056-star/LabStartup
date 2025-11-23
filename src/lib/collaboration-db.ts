@@ -6,12 +6,27 @@ import type { CollaborationRoom as SampleRoom } from "@/lib/data/collaboration"
 /**
  * Convertit un roomId (ObjectId ou string) en chaîne de caractères
  */
-function roomIdToString(roomId: ObjectId | string): string {
+function roomIdToString(roomId: ObjectId | string | any): string {
   if (typeof roomId === "string") {
     return roomId
   }
-  if (roomId && typeof roomId === "object" && "toHexString" in roomId) {
-    return roomId.toHexString()
+  if (roomId && typeof roomId === "object") {
+    // Check if it's a MongoDB ObjectId with toHexString method
+    if (typeof roomId.toHexString === "function") {
+      try {
+        return roomId.toHexString()
+      } catch {
+        // Fall through to other checks
+      }
+    }
+    // Handle serialized ObjectId (from Next.js serialization)
+    if (roomId.$oid) {
+      return roomId.$oid
+    }
+    // Handle ObjectId-like objects with id property
+    if (roomId.id && Buffer.isBuffer(roomId.id)) {
+      return roomId.id.toString("hex")
+    }
   }
   // Fallback: convertir en chaîne
   return String(roomId)
@@ -20,18 +35,93 @@ function roomIdToString(roomId: ObjectId | string): string {
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
  */
-function idToString(id: ObjectId | string | undefined | null): string {
+function idToString(id: ObjectId | string | undefined | null | any): string {
   if (!id) {
     return ""
   }
   if (typeof id === "string") {
     return id
   }
-  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
-    return id.toHexString()
+  // Handle MongoDB ObjectId instances
+  if (id && typeof id === "object") {
+    // Check if it's a MongoDB ObjectId with toHexString method
+    if (typeof id.toHexString === "function") {
+      try {
+        return id.toHexString()
+      } catch {
+        // Fall through to other checks
+      }
+    }
+    // Handle serialized ObjectId (from Next.js serialization)
+    if (id.$oid) {
+      return id.$oid
+    }
+    // Handle ObjectId-like objects with id property
+    if (id.id && Buffer.isBuffer(id.id)) {
+      return id.id.toString("hex")
+    }
+    // If it's already a string-like object, try to extract it
+    if (id.toString && typeof id.toString === "function" && id.toString !== Object.prototype.toString) {
+      const str = id.toString()
+      // Check if it looks like a valid ObjectId hex string (24 hex characters)
+      if (/^[0-9a-fA-F]{24}$/.test(str)) {
+        return str
+      }
+    }
   }
   // Fallback: convertir en chaîne
   return String(id)
+}
+
+/**
+ * Convertit une Date en chaîne ISO de manière sécurisée
+ * Gère les cas où la Date peut être sérialisée/désérialisée par Next.js
+ */
+function dateToISOString(date: Date | string | undefined | null | any): string {
+  if (!date) {
+    return new Date().toISOString()
+  }
+  // Si c'est déjà une chaîne ISO, la retourner telle quelle
+  if (typeof date === "string") {
+    // Vérifier si c'est déjà une chaîne ISO valide
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(date)) {
+      return date
+    }
+    // Sinon, essayer de la convertir en Date puis en ISO
+    try {
+      return new Date(date).toISOString()
+    } catch {
+      return date
+    }
+  }
+  // Si c'est une instance Date avec toISOString
+  if (date instanceof Date || (date && typeof date === "object" && typeof date.toISOString === "function")) {
+    try {
+      return date.toISOString()
+    } catch {
+      // Fall through
+    }
+  }
+  // Handle serialized Date (from Next.js serialization)
+  if (date && typeof date === "object") {
+    if (date.$date) {
+      return new Date(date.$date).toISOString()
+    }
+    // Try to construct a Date from common properties
+    if (typeof date.getTime === "function") {
+      try {
+        return new Date(date.getTime()).toISOString()
+      } catch {
+        // Fall through
+      }
+    }
+  }
+  // Fallback: essayer de créer une Date puis convertir
+  try {
+    return new Date(date).toISOString()
+  } catch {
+    return new Date().toISOString()
+  }
 }
 
 export type DbCollaborationRoom = {
@@ -227,7 +317,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
       title: room.title,
       simulationId: room.simulationId,
       active: room.active,
-      startedAt: room.startedAt.toISOString(),
+      startedAt: dateToISOString(room.startedAt),
       notes: room.notes,
       ownerId: room.ownerId,
       members: roomMembers.map(member => ({
@@ -242,7 +332,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
         userId: request.userId,
         userName: request.userName,
         userRole: request.userRole,
-        requestedAt: request.requestedAt.toISOString(),
+        requestedAt: dateToISOString(request.requestedAt),
       })),
       chatLog: (messagesByRoom.get(roomKey) ?? []).map(message => ({
         id: idToString(message._id),
@@ -250,7 +340,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
         authorName: message.authorName,
         role: message.role,
         message: message.message,
-        timestamp: message.createdAt.toISOString(),
+        timestamp: dateToISOString(message.createdAt),
       })),
       screenShares: (sharesByRoom.get(roomKey) ?? []).map(share => ({
         id: idToString(share._id),
@@ -320,7 +410,7 @@ export async function getCollaborationMessages(roomId: string, limit: number = 1
     authorName: msg.authorName,
     role: msg.role,
     message: msg.message,
-    timestamp: msg.createdAt.toISOString(),
+    timestamp: dateToISOString(msg.createdAt),
   }))
 }
 

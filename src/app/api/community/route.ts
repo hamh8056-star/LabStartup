@@ -17,16 +17,41 @@ import { getDatabase } from "@/lib/mongodb"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
+ * Gère les cas où l'ObjectId peut être sérialisé/désérialisé par Next.js
  */
-function idToString(id: ObjectId | string | undefined | null): string {
+function idToString(id: ObjectId | string | undefined | null | any): string {
   if (!id) {
     return ""
   }
   if (typeof id === "string") {
     return id
   }
-  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
-    return id.toHexString()
+  // Handle MongoDB ObjectId instances
+  if (id && typeof id === "object") {
+    // Check if it's a MongoDB ObjectId with toHexString method
+    if (typeof id.toHexString === "function") {
+      try {
+        return id.toHexString()
+      } catch {
+        // Fall through to other checks
+      }
+    }
+    // Handle serialized ObjectId (from Next.js serialization)
+    if (id.$oid) {
+      return id.$oid
+    }
+    // Handle ObjectId-like objects with id property
+    if (id.id && Buffer.isBuffer(id.id)) {
+      return id.id.toString("hex")
+    }
+    // If it's already a string-like object, try to extract it
+    if (id.toString && typeof id.toString === "function" && id.toString !== Object.prototype.toString) {
+      const str = id.toString()
+      // Check if it looks like a valid ObjectId hex string (24 hex characters)
+      if (/^[0-9a-fA-F]{24}$/.test(str)) {
+        return str
+      }
+    }
   }
   // Fallback: convertir en chaîne
   return String(id)
