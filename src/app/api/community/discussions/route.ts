@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb"
 import { authOptions } from "@/lib/auth"
 import { createDiscussion, upvoteDiscussion } from "@/lib/community-db"
 import { ensureCommunityIndexes } from "@/lib/community-db"
+import { dateToISOString } from "@/lib/mongodb"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
@@ -93,7 +94,7 @@ export async function POST(request: Request) {
         author: discussion.authorName,
         discipline: discussion.discipline,
         disciplineLabel: discussion.disciplineLabel,
-        createdAt: discussion.createdAt.toISOString(),
+        createdAt: dateToISOString(discussion.createdAt),
         preview: discussion.preview,
         replies: discussion.replies,
         upvotes: discussion.upvotes.length,

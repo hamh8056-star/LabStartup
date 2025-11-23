@@ -13,7 +13,7 @@ import {
   getProjectComments,
 } from "@/lib/community-db"
 import { getCommunityData } from "@/lib/data/community"
-import { getDatabase } from "@/lib/mongodb"
+import { getDatabase, dateToISOString } from "@/lib/mongodb"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
         id: idToString(reply._id),
         author: reply.authorName,
         content: reply.content,
-        createdAt: reply.createdAt.toISOString(),
+        createdAt: dateToISOString(reply.createdAt),
         upvotes: reply.upvotes.length,
       }))
     })
@@ -105,7 +105,7 @@ export async function GET(request: Request) {
         author: d.authorName,
         discipline: d.discipline,
         disciplineLabel: d.disciplineLabel,
-        createdAt: d.createdAt.toISOString(),
+        createdAt: dateToISOString(d.createdAt),
         preview: d.preview,
         replies: d.replies,
         upvotes: d.upvotes.length,
@@ -122,7 +122,7 @@ export async function GET(request: Request) {
             title: p.title,
             disciplineLabel: p.disciplineLabel,
             author: p.authorName,
-            publishedAt: p.createdAt.toISOString(),
+            publishedAt: dateToISOString(p.createdAt),
             summary: p.summary,
             downloads: p.downloads,
             peerReviews: p.peerReviews,
@@ -131,7 +131,7 @@ export async function GET(request: Request) {
               author: c.authorName,
               content: c.content,
               rating: c.rating,
-              createdAt: c.createdAt.toISOString(),
+              createdAt: dateToISOString(c.createdAt),
             })),
           }
         })
@@ -158,7 +158,7 @@ export async function GET(request: Request) {
       id: idToString(c._id),
       title: c.title || "Concours VR — Novembre 2024",
       description: c.description || "Thème : concevoir une expérience immersive simulant la photosynthèse. Prix : casque VR + certification.",
-      deadline: c.deadline.toISOString(),
+      deadline: dateToISOString(c.deadline),
       teamSize: c.teamSize,
       requirements: c.requirements,
       prizes: c.prizes,

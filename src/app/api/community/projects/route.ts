@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb"
 import { authOptions } from "@/lib/auth"
 import { createProject, incrementProjectDownloads } from "@/lib/community-db"
 import { ensureCommunityIndexes } from "@/lib/community-db"
+import { dateToISOString } from "@/lib/mongodb"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
         title: project.title,
         author: project.authorName,
         disciplineLabel: project.disciplineLabel,
-        publishedAt: project.createdAt.toISOString(),
+        publishedAt: dateToISOString(project.createdAt),
         summary: project.summary,
         downloads: project.downloads,
         peerReviews: project.peerReviews,

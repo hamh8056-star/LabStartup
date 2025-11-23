@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb"
 
 import { authOptions } from "@/lib/auth"
 import { recordAuditLog } from "@/lib/security/audit"
-import { getDatabase } from "@/lib/mongodb"
+import { getDatabase, dateToISOString } from "@/lib/mongodb"
 
 export async function GET() {
   const session = await getServerSession(authOptions)
@@ -31,8 +31,8 @@ export async function GET() {
         type: backup.type || "manual",
         status: backup.status || "pending",
         size: backup.size,
-        createdAt: backup.createdAt.toISOString(),
-        completedAt: backup.completedAt ? backup.completedAt.toISOString() : undefined,
+        createdAt: dateToISOString(backup.createdAt),
+        completedAt: backup.completedAt ? dateToISOString(backup.completedAt) : undefined,
         error: backup.error,
       })),
     })

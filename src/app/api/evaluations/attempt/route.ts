@@ -8,6 +8,7 @@ import {
   recordEvaluationAttempt,
   seedEvaluationData,
 } from "@/lib/evaluations-db"
+import { dateToISOString } from "@/lib/mongodb"
 
 const answerSchema = z.object({
   questionId: z.string().min(1),
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
             id: result.certificate.id,
             badge: result.certificate.badge,
             score: result.certificate.score,
-            issuedAt: result.certificate.issuedAt.toISOString(),
+            issuedAt: dateToISOString(result.certificate.issuedAt),
           }
         : null,
     })

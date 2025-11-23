@@ -22,7 +22,7 @@ import {
   deleteBreakoutGroup,
 } from "@/lib/collaboration-db"
 import { getSampleRooms } from "@/lib/data/collaboration"
-import { getDatabase } from "@/lib/mongodb"
+import { getDatabase, dateToISOString } from "@/lib/mongodb"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
@@ -253,7 +253,7 @@ export async function PUT(request: Request) {
           authorName: savedMessage.authorName,
           role: savedMessage.role,
           message: savedMessage.message,
-          timestamp: savedMessage.createdAt.toISOString(),
+          timestamp: dateToISOString(savedMessage.createdAt),
         },
       })
     }

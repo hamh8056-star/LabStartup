@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
 import { getRecentAuditLogs } from "@/lib/security/audit"
+import { dateToISOString } from "@/lib/mongodb"
 
 export const dynamic = "force-dynamic"
 
@@ -36,7 +37,7 @@ export async function GET(request: Request) {
         metadata: log.metadata ?? {},
         userId: log.userId ?? null,
         email: log.email ?? null,
-        createdAt: log.createdAt.toISOString(),
+        createdAt: dateToISOString(log.createdAt),
       })),
     })
   } catch (error) {

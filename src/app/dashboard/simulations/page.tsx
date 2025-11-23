@@ -53,7 +53,7 @@ export default async function DashboardSimulationsPage() {
         title="Simulations immersives"
         subtitle={subtitle}
       />
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-4 p-4 sm:space-y-6 sm:p-6">
         <SimulationsHub simulations={simulations} />
       </div>
     </div>

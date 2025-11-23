@@ -17,7 +17,7 @@ export default async function DashboardLabsPage() {
         title="Laboratoires virtuels"
         subtitle="Reproduisez fidèlement les environnements de physique, chimie, biologie ou électronique."
       />
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-4 sm:p-6">
         <LabsBrowser labs={labs} />
       </div>
     </div>

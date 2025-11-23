@@ -5,6 +5,7 @@ import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { generateApiKey, listApiKeys } from "@/lib/security/api-keys"
 import type { UserRole } from "@/lib/roles"
+import { dateToISOString } from "@/lib/mongodb"
 
 const createSchema = z.object({
   name: z.string().min(3).max(64),
@@ -30,9 +31,9 @@ export async function GET() {
         id: key._id.toString(),
         name: key.name,
         prefix: key.prefix || key.hashedKey?.substring(0, 12) || "***",
-        createdAt: key.createdAt.toISOString(),
-        revokedAt: key.revokedAt ? key.revokedAt.toISOString() : null,
-        lastUsedAt: key.lastUsedAt ? key.lastUsedAt.toISOString() : undefined,
+        createdAt: dateToISOString(key.createdAt),
+        revokedAt: key.revokedAt ? dateToISOString(key.revokedAt) : null,
+        lastUsedAt: key.lastUsedAt ? dateToISOString(key.lastUsedAt) : undefined,
       }))
     })
   }

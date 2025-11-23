@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb"
 import { authOptions } from "@/lib/auth"
 import { listContests, joinContest } from "@/lib/community-db"
 import { ensureCommunityIndexes } from "@/lib/community-db"
-import { getDatabase } from "@/lib/mongodb"
+import { getDatabase, dateToISOString } from "@/lib/mongodb"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
@@ -34,7 +34,7 @@ export async function GET() {
       id: idToString(c._id),
       title: c.title,
       description: c.description,
-      deadline: c.deadline.toISOString(),
+      deadline: dateToISOString(c.deadline),
       teamSize: c.teamSize,
       requirements: c.requirements,
       prizes: c.prizes,

@@ -25,7 +25,7 @@ export default async function DashboardResourcesPage({
         title="Ressources pédagogiques"
         subtitle="Guides, vidéos, exercices interactifs et glossaire scientifique connectés aux laboratoires virtuels."
       />
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-4 p-4 sm:space-y-6 sm:p-6">
         <Suspense fallback={<div>Chargement...</div>}>
           <ResourcesWorkspace
             initialResources={resourceResult.resources}

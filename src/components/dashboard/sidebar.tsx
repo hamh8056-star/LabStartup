@@ -19,12 +19,20 @@ import {
   Globe,
   Shield,
   UserCog,
+  Menu,
 } from "lucide-react"
 import { useMemo, useState } from "react"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import type { UserRole } from "@/lib/roles"
 import { useLanguage } from "@/components/i18n/language-provider"
@@ -44,12 +52,20 @@ type DashboardSidebarProps = {
   }
   className?: string
   collapsible?: boolean
+  mobile?: boolean
+  onClose?: () => void
 }
 
-export function DashboardSidebar({ user, className, collapsible = true }: DashboardSidebarProps) {
+export function DashboardSidebar({ user, className, collapsible = true, mobile = false, onClose }: DashboardSidebarProps) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const isCollapsed = collapsible ? collapsed : false
+
+  const handleLinkClick = () => {
+    if (mobile && onClose) {
+      onClose()
+    }
+  }
 
   const role = (user.role?.toLowerCase() ?? "student") as UserRole
   const {
@@ -101,12 +117,13 @@ export function DashboardSidebar({ user, className, collapsible = true }: Dashbo
     .toUpperCase()
     .slice(0, 2)
 
-  return (
+  const SidebarContent = () => (
     <aside
       data-collapsed={isCollapsed}
       className={cn(
         "group/sidebar relative flex h-full flex-col gap-6 border-r border-border/60 bg-gradient-to-b from-sidebar via-background to-sidebar transition-all duration-300",
         isCollapsed ? "w-[84px] px-3 py-6" : "w-[280px] px-6 py-6",
+        mobile && "border-r-0 w-full px-6",
         className,
       )}
     >
@@ -153,6 +170,7 @@ export function DashboardSidebar({ user, className, collapsible = true }: Dashbo
             <Link
               key={link.href}
               href={link.href}
+              onClick={handleLinkClick}
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2 font-medium transition",
                 active
@@ -181,5 +199,28 @@ export function DashboardSidebar({ user, className, collapsible = true }: Dashbo
       ) : null}
     </aside>
   )
+
+  if (mobile) {
+    return (
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline" size="icon" className="md:hidden">
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[280px] p-0">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Navigation</SheetTitle>
+          </SheetHeader>
+          <div className="h-full overflow-y-auto py-6">
+            <SidebarContent />
+          </div>
+        </SheetContent>
+      </Sheet>
+    )
+  }
+
+  return <SidebarContent />
 }
 

@@ -4,6 +4,7 @@ import { z } from "zod"
 
 import { authOptions } from "@/lib/auth"
 import { ensureEvaluationIndexes, issueCertificate, seedEvaluationData } from "@/lib/evaluations-db"
+import { dateToISOString } from "@/lib/mongodb"
 
 const issueSchema = z.object({
   evaluationId: z.string().min(1),
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
       id: certificate.id,
       badge: certificate.badge,
       score: certificate.score,
-      issuedAt: certificate.issuedAt.toISOString(),
+      issuedAt: dateToISOString(certificate.issuedAt),
     },
   })
 }

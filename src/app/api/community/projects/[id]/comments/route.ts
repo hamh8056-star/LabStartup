@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb"
 import { authOptions } from "@/lib/auth"
 import { addProjectComment } from "@/lib/community-db"
 import { recordAuditLog } from "@/lib/security/audit"
+import { dateToISOString } from "@/lib/mongodb"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
@@ -65,7 +66,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         author: comment.authorName,
         content: comment.content,
         rating: comment.rating,
-        createdAt: comment.createdAt.toISOString(),
+        createdAt: dateToISOString(comment.createdAt),
       },
     })
   } catch (error) {

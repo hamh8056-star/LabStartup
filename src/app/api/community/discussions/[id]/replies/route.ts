@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb"
 
 import { authOptions } from "@/lib/auth"
 import { addDiscussionReply } from "@/lib/community-db"
+import { dateToISOString } from "@/lib/mongodb"
 
 /**
  * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
@@ -60,7 +61,7 @@ export async function POST(
         id: idToString(reply._id),
         author: reply.authorName,
         content: reply.content,
-        createdAt: reply.createdAt.toISOString(),
+        createdAt: dateToISOString(reply.createdAt),
         upvotes: reply.upvotes.length,
       },
     })

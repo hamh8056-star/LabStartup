@@ -42,22 +42,22 @@ export function SiteHeader() {
   if (isWorkspaceView) {
     return (
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-gradient-to-r from-[#0a1630]/90 via-[#102a5c]/85 to-[#1e3a8a]/90 text-white backdrop-blur">
-        <div className="flex h-14 w-full items-center justify-between gap-3 px-4 text-white md:px-6">
-          <Link href="/dashboard" className="flex items-center gap-3 text-sm font-semibold text-white">
+        <div className="flex h-12 w-full items-center justify-between gap-2 px-3 text-white sm:h-14 sm:gap-3 sm:px-4 md:px-6">
+          <Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold text-white sm:gap-3">
             <Image
               src="/logo-talimia.svg"
               alt="Talimia Lab DZ"
               width={140}
               height={48}
-              className="h-9 w-auto"
+              className="h-7 w-auto sm:h-9"
               priority
             />
             <span className="sr-only">{layout.workspaceTitle}</span>
           </Link>
-          <div className="flex items-center gap-2 text-white">
+          <div className="flex items-center gap-1.5 text-white sm:gap-2">
             <Link
               href="/"
-              className="hidden rounded-full border border-white/40 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-white/20 hover:text-white md:inline-flex"
+              className="hidden rounded-full border border-white/40 px-2 py-1 text-xs font-medium text-white shadow-sm transition hover:bg-white/20 hover:text-white sm:px-3 sm:py-1.5 sm:text-sm md:inline-flex"
             >
               {layout.workspaceHome}
             </Link>
@@ -71,15 +71,16 @@ export function SiteHeader() {
             ) : (
               <Link
                 href="/auth/login"
-                className="hidden rounded-full border border-white/40 bg-white/15 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-white/25 hover:text-white md:inline-flex"
+                className="hidden rounded-full border border-white/40 bg-white/15 px-2 py-1 text-xs font-medium text-white shadow-sm transition hover:bg-white/25 hover:text-white sm:px-3 sm:py-1.5 sm:text-sm md:inline-flex"
               >
                 {layout.workspaceLogin}
               </Link>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="outline" className="md:hidden">
-                  <Menu className="size-5" />
+                <Button size="icon" variant="outline" className="h-8 w-8 md:hidden">
+                  <Menu className="size-4" />
+                  <span className="sr-only">Menu</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44 space-y-1">
@@ -104,19 +105,19 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-white/80 backdrop-blur-md transition-colors dark:bg-slate-950/80">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-3 text-sm font-semibold">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-4">
+        <Link href="/" className="flex items-center gap-2 text-sm font-semibold sm:gap-3">
           <Image
             src="/logo-talimia.svg"
             alt="Talimia Lab DZ"
             width={160}
             height={60}
-            className="h-10 w-auto"
+            className="h-8 w-auto sm:h-10"
             priority
           />
           <span className="sr-only">{layout.landingBrand}</span>
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
+        <nav className="hidden items-center gap-4 text-sm font-medium text-muted-foreground sm:gap-6 md:flex">
           {navItems.map(item => (
             <Link
               key={item.href}
@@ -127,18 +128,19 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <div className="hidden items-center gap-2 text-sm text-muted-foreground md:flex">
             <LanguageSwitcher />
           </div>
           <ThemeToggle />
-          <Button asChild size="sm" className="hidden md:inline-flex">
+          <Button asChild size="sm" className="hidden text-xs sm:text-sm md:inline-flex">
             <Link href="/auth/login">{layout.navLogin}</Link>
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="outline" className="md:hidden">
-                <Menu className="size-5" />
+              <Button size="icon" variant="outline" className="h-8 w-8 md:hidden">
+                <Menu className="size-4" />
+                <span className="sr-only">Menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 space-y-1">

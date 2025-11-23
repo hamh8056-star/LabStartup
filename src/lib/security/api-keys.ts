@@ -1,7 +1,7 @@
 import { randomBytes, createHash } from "crypto"
 import type { ObjectId } from "mongodb"
 
-import { getDatabase } from "@/lib/mongodb"
+import { getDatabase, dateToISOString } from "@/lib/mongodb"
 import { recordAuditLog } from "@/lib/security/audit"
 
 export type ApiKeyDocument = {
@@ -57,9 +57,9 @@ export async function listApiKeys(userId: string): Promise<PublicApiKey[]> {
   return keys.map(key => ({
     id: key._id.toString(),
     name: key.name,
-    createdAt: key.createdAt.toISOString(),
-    lastUsedAt: key.lastUsedAt ? key.lastUsedAt.toISOString() : null,
-    revokedAt: key.revokedAt ? key.revokedAt.toISOString() : null,
+    createdAt: dateToISOString(key.createdAt),
+    lastUsedAt: key.lastUsedAt ? dateToISOString(key.lastUsedAt) : null,
+    revokedAt: key.revokedAt ? dateToISOString(key.revokedAt) : null,
   }))
 }
 
