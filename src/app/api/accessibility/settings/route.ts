@@ -17,7 +17,7 @@ const updateSettingsSchema = z.object({
   audioDescriptions: z.boolean().optional(),
   offlineMode: z.boolean().optional(),
   lmsIntegration: z.object({
-    platform: z.string(),
+    platform: z.enum(["moodle", "google-classroom", "microsoft-teams", "canvas", "blackboard", "other"]),
     apiKey: z.string().optional(),
     apiUrl: z.string().url().optional(),
     enabled: z.boolean(),

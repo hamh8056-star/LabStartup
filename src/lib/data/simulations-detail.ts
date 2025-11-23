@@ -33,6 +33,11 @@ export type SimulationDetail = {
   parameters: SimulationParameter[]
   stages: SimulationStage[]
   safety: string[]
+  freeMode?: {
+    description: string
+    recommendedTools: string[]
+    resetChecklist: string[]
+  }
 }
 
 const SIMULATION_DETAILS: Record<string, SimulationDetail> = {

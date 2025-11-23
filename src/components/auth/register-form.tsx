@@ -34,7 +34,7 @@ const registerSchema = z.object({
   email: z.string().email("Adresse email invalide."),
   password: z.string().min(8, "Le mot de passe doit comporter au moins 8 caractères."),
   role: z.enum(USER_ROLES, {
-    errorMap: () => ({ message: "Choisissez un rôle." }),
+    message: "Choisissez un rôle.",
   }),
   institution: z.string().min(2, "Indiquez le nom de l’établissement.").optional(),
 })

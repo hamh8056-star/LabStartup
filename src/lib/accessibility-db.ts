@@ -15,7 +15,7 @@ export type AccessibilitySettings = {
   audioDescriptions: boolean
   offlineMode: boolean
   lmsIntegration?: {
-    platform: string
+    platform: "moodle" | "google-classroom" | "microsoft-teams" | "canvas" | "blackboard" | "other"
     apiKey?: string
     apiUrl?: string
     enabled: boolean

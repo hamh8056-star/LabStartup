@@ -259,7 +259,7 @@ export function AssistantWorkspace({ initialProfile, initialDiagnostics, initial
                           <Button
                             key={option}
                             variant="outline"
-                            size="xs"
+                            size="sm"
                             onClick={() => handleFollowUp(option)}
                           >
                             {option}
@@ -270,7 +270,7 @@ export function AssistantWorkspace({ initialProfile, initialDiagnostics, initial
                     {message.actions?.length ? (
                       <div className="flex flex-wrap gap-2 text-xs">
                         {message.actions.map(action => (
-                          <Button key={action.target} asChild variant="ghost" size="xs" className="gap-1">
+                          <Button key={action.target} asChild variant="ghost" size="sm" className="gap-1">
                             <a href={action.target}>
                               <ArrowRight className="size-3.5" />
                               {action.label}

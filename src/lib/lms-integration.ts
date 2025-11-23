@@ -14,7 +14,7 @@ export class LMSService {
 
   constructor(settings?: AccessibilitySettings) {
     if (settings?.lmsIntegration) {
-      this.integration = settings.lmsIntegration
+      this.integration = settings.lmsIntegration as LMSIntegration
     }
   }
 

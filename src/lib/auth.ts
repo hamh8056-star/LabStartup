@@ -32,9 +32,9 @@ const env = getEnv()
 
 const clientPromise = getMongoClient()
 
-const adapter: Adapter = MongoDBAdapter(clientPromise, {
+const adapter = MongoDBAdapter(clientPromise, {
   databaseName: env.MONGODB_DB,
-})
+}) as Adapter
 
 const providers: NextAuthOptions["providers"] = [
   Credentials({

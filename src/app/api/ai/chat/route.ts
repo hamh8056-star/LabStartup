@@ -22,6 +22,7 @@ const chatRequestSchema = z.object({
       name: z.string(),
       description: z.string(),
       parameters: z.record(
+        z.string(),
         z.object({
           min: z.number(),
           max: z.number(),

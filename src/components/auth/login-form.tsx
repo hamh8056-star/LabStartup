@@ -43,9 +43,17 @@ export function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const hasWelcomed = useRef(false)
 
+  // Helper function to convert t() result to string
+  const ts = (path: string): string => {
+    const value = t(path)
+    return Array.isArray(value) ? value[0] : value
+  }
+
+  const invalidEmailValue = t("auth.login.invalidEmail")
+  const invalidPasswordValue = t("auth.login.invalidPassword")
   const loginSchema = createLoginSchema({
-    invalidEmail: t("auth.login.invalidEmail"),
-    invalidPassword: t("auth.login.invalidPassword"),
+    invalidEmail: Array.isArray(invalidEmailValue) ? invalidEmailValue[0] : invalidEmailValue,
+    invalidPassword: Array.isArray(invalidPasswordValue) ? invalidPasswordValue[0] : invalidPasswordValue,
   })
 
   type LoginValues = z.infer<typeof loginSchema>
@@ -65,8 +73,10 @@ export function LoginForm() {
 
     if (registered && !hasWelcomed.current) {
       hasWelcomed.current = true
-      toast.success(t("auth.login.welcomeMessage"), {
-        description: t("auth.login.welcomeDescription"),
+      const welcomeMessageValue = t("auth.login.welcomeMessage")
+      const welcomeDescriptionValue = t("auth.login.welcomeDescription")
+      toast.success(Array.isArray(welcomeMessageValue) ? welcomeMessageValue[0] : welcomeMessageValue, {
+        description: Array.isArray(welcomeDescriptionValue) ? welcomeDescriptionValue[0] : welcomeDescriptionValue,
       })
     }
   }, [searchParams, t])
@@ -80,8 +90,11 @@ export function LoginForm() {
 
       form.setValue("email", account.email)
       form.setValue("password", DEMO_PASSWORD)
-      toast.info(t("auth.login.credentialsPrefilled"), {
-        description: t("auth.login.accountReady").replace("{account}", account.label),
+      const accountReadyValue = t("auth.login.accountReady")
+      const accountReadyText = Array.isArray(accountReadyValue) ? accountReadyValue[0] : accountReadyValue
+      const credentialsPrefilledValue = t("auth.login.credentialsPrefilled")
+      toast.info(Array.isArray(credentialsPrefilledValue) ? credentialsPrefilledValue[0] : credentialsPrefilledValue, {
+        description: accountReadyText.replace("{account}", account.label),
       })
 
       if (clearQuery && typeof window !== "undefined") {
@@ -135,17 +148,21 @@ export function LoginForm() {
       })
 
       if (!result) {
-        setErrorMessage(t("auth.login.unexpectedError"))
+        const unexpectedErrorValue = t("auth.login.unexpectedError")
+        setErrorMessage(Array.isArray(unexpectedErrorValue) ? unexpectedErrorValue[0] : unexpectedErrorValue)
         return
       }
 
       if (result.error) {
-        setErrorMessage(t("auth.login.invalidCredentials"))
+        const invalidCredentialsValue = t("auth.login.invalidCredentials")
+        setErrorMessage(Array.isArray(invalidCredentialsValue) ? invalidCredentialsValue[0] : invalidCredentialsValue)
         return
       }
 
-      toast.success(t("auth.login.loginSuccess"), {
-        description: t("auth.login.loginSuccessDescription"),
+      const loginSuccessValue = t("auth.login.loginSuccess")
+      const loginSuccessDescriptionValue = t("auth.login.loginSuccessDescription")
+      toast.success(Array.isArray(loginSuccessValue) ? loginSuccessValue[0] : loginSuccessValue, {
+        description: Array.isArray(loginSuccessDescriptionValue) ? loginSuccessDescriptionValue[0] : loginSuccessDescriptionValue,
       })
 
       const destination = result.url ?? callbackUrl
@@ -179,10 +196,10 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("auth.login.emailLabel")}</FormLabel>
+              <FormLabel>{ts("auth.login.emailLabel")}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder={t("auth.login.emailPlaceholder")}
+                  placeholder={ts("auth.login.emailPlaceholder")}
                   type="email"
                   autoComplete="email"
                   disabled={isSubmitting}
@@ -198,17 +215,17 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("auth.login.passwordLabel")}</FormLabel>
+              <FormLabel>{ts("auth.login.passwordLabel")}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder={t("auth.login.passwordPlaceholder")}
+                  placeholder={ts("auth.login.passwordPlaceholder")}
                   type="password"
                   autoComplete="current-password"
                   disabled={isSubmitting}
                   {...field}
                 />
               </FormControl>
-              <FormDescription>{t("auth.login.passwordDescription")}</FormDescription>
+              <FormDescription>{ts("auth.login.passwordDescription")}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -220,7 +237,7 @@ export function LoginForm() {
         ) : null}
         <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
           {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <LockKeyhole className="size-4" />}
-          {isSubmitting ? t("auth.login.submittingButton") : t("auth.login.submitButton")}
+          {isSubmitting ? ts("auth.login.submittingButton") : ts("auth.login.submitButton")}
         </Button>
         <Button
           type="button"
@@ -229,11 +246,11 @@ export function LoginForm() {
           onClick={() => signIn("google", { callbackUrl })}
         >
           <Mail className="size-4" />
-          {t("auth.login.continueWithGmail")}
+          {ts("auth.login.continueWithGmail")}
         </Button>
         <p className="text-center text-xs text-muted-foreground">
           <a href="/auth/forgot-password" className="text-primary hover:underline">
-            {t("auth.login.forgotPassword")}
+            {ts("auth.login.forgotPassword")}
           </a>
         </p>
       </form>

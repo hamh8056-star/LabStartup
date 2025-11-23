@@ -798,7 +798,7 @@ export function ResourcesWorkspace({
                             <Button
                               key={`related-resource-${resourceIndex}-${resourceId}`}
                               variant="outline"
-                              size="xs"
+                              size="sm"
                               onClick={() => {
                                 const resource = resources.find(r => r.id === resourceId)
                                 if (resource) {

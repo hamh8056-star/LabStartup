@@ -123,7 +123,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                   <FormItem>
                     <FormLabel>Établissement</FormLabel>
                     <FormControl>
-                      <Input placeholder="Université Ferhat Abbas Sétif 1" {...field} />
+                      <Input placeholder="Université Ferhat Abbas Sétif 1" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -136,7 +136,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                   <FormItem>
                     <FormLabel>Avatar (URL)</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://..." {...field} />
+                      <Input placeholder="https://..." {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormDescription>Image hébergée utilisée dans les espaces collaboratifs.</FormDescription>
                     <FormMessage />
@@ -178,6 +178,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                       placeholder="Décrivez vos domaines d&apos;expertise, vos objectifs pédagogiques..."
                       className="min-h-[120px]"
                       {...field}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormDescription>Visible par vos collaborateurs lors des sessions partagées.</FormDescription>

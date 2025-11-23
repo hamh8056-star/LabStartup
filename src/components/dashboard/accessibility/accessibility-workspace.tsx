@@ -514,12 +514,15 @@ export function AccessibilityWorkspace() {
           <CardContent className="space-y-4 text-sm text-muted-foreground">
             <StatusRow
               icon={isOnline ? <CloudSun className="size-4 text-emerald-500" /> : <CloudOff className="size-4 text-red-500" />}
-              title={isOnline ? t("common.online") : t("common.offline")}
+              title={(isOnline 
+                ? (() => { const v = t("common.online"); return Array.isArray(v) ? v[0] : v; })()
+                : (() => { const v = t("common.offline"); return Array.isArray(v) ? v[0] : v; })()
+              ) as string}
               description={isOnline ? "Synchronisation des données activée." : "Utilisation hors ligne — les modifications seront envoyées dès le retour du réseau."}
             />
             <StatusRow
               icon={<Headset className={cn("size-4", vrSupported ? "text-emerald-500" : "text-muted-foreground") } />}
-              title={t("common.vrReady")}
+              title={(() => { const v = t("common.vrReady"); return Array.isArray(v) ? v[0] : v; })() as string}
               description={vrSupported ? "Casque VR détecté. Vous pouvez lancer les expériences immersives." : "Activez WebXR dans votre navigateur ou connectez un casque compatible."}
             />
             <StatusRow

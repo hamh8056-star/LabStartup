@@ -74,16 +74,17 @@ export async function revokeApiKey(userId: string, keyId: string) {
       { returnDocument: "after" },
     )
 
-  if (result.value) {
+  if (result) {
     await recordAuditLog({
       userId,
       action: "api_key.revoked",
       severity: "warning",
-      metadata: { keyId, name: result.value.name },
+      metadata: { keyId, name: result.name },
     })
+    return true
   }
 
-  return Boolean(result.value)
+  return false
 }
 
 

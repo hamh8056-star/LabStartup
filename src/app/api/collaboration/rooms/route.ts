@@ -424,7 +424,7 @@ export async function PUT(request: Request) {
       await db.collection("collaboration_rooms").updateOne(
         { _id: roomObjectId },
         { 
-          $push: { notes: note.trim() },
+          $push: { notes: note.trim() } as any,
           $set: { updatedAt: new Date() }
         }
       )

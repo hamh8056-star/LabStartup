@@ -227,7 +227,7 @@ export function AdminRolesOverview() {
         {(Object.keys(rolesContent) as RoleKey[]).map(roleKey => {
           const palette = rolePalette[roleKey]
           const content = rolesContent[roleKey]
-          const Icon = palette.icon
+          const Icon = palette.icon as React.ComponentType<{ className?: string }>
 
           return (
             <Card key={roleKey} className="border-border/60 bg-card/95 backdrop-blur">
@@ -241,7 +241,7 @@ export function AdminRolesOverview() {
               </CardHeader>
               <CardContent className="space-y-4 text-sm text-muted-foreground">
                 {content.highlights.map(item => {
-                  const HighlightIcon = item.icon
+                  const HighlightIcon = item.icon as React.ComponentType<{ className?: string }>
                   return (
                     <div key={item.title} className="flex gap-3 rounded-2xl border border-border/60 bg-muted/25 p-3">
                       <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">

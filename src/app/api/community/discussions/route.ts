@@ -9,7 +9,7 @@ import { ensureCommunityIndexes } from "@/lib/community-db"
 const createDiscussionSchema = z.object({
   title: z.string().min(5, "Le titre doit contenir au moins 5 caractères").max(200, "Le titre ne peut pas dépasser 200 caractères"),
   discipline: z.enum(["physics", "biology", "electronics", "informatics"], {
-    errorMap: () => ({ message: "Discipline invalide. Choisissez parmi: Physique, Biologie, Électronique, Informatique" })
+    message: "Discipline invalide. Choisissez parmi: Physique, Biologie, Électronique, Informatique"
   }),
   content: z.string().min(10, "Le contenu doit contenir au moins 10 caractères").max(5000, "Le contenu ne peut pas dépasser 5000 caractères"),
   tags: z.array(z.string()).max(10, "Maximum 10 tags autorisés").optional().default([]),

@@ -25,11 +25,7 @@ const instrumentAdviceSchema = z.object({
     .catch("Instrument inconnu"),
   description: z.string().optional().default(""),
   parameters: z
-    .record(parameterSchema)
-    .catch((val, ctx) => {
-      console.warn("Paramètres invalides reçus, utilisation d'une valeur vide.", val)
-      return {}
-    })
+    .record(z.string(), parameterSchema)
     .default({}),
   discipline: z.string().default("physique"),
   question: z.string().optional().default("Comment utiliser cet instrument ?"),

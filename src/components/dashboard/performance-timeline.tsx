@@ -65,7 +65,7 @@ export function PerformanceTimeline({ data }: PerformanceTimelineProps) {
             <Area
               type="monotone"
               dataKey="completionRate"
-              name={t("dashboard.main.timeline.completionRate")}
+              name={(() => { const v = t("dashboard.main.timeline.completionRate"); return Array.isArray(v) ? v[0] : v; })()}
               stroke="#6366f1"
               fillOpacity={1}
               fill="url(#colorCompletion)"
@@ -73,7 +73,7 @@ export function PerformanceTimeline({ data }: PerformanceTimelineProps) {
             <Area
               type="monotone"
               dataKey="averageScore"
-              name={t("dashboard.main.timeline.averageScore")}
+              name={(() => { const v = t("dashboard.main.timeline.averageScore"); return Array.isArray(v) ? v[0] : v; })()}
               stroke="#22c55e"
               fillOpacity={0.8}
               fill="url(#colorScore)"

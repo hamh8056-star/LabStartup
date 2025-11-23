@@ -125,7 +125,7 @@ function EnergyParticleField({ gravity, temperature, parameterValues, progress, 
   return (
     <points ref={meshRef}>
       <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={positions.length / 3} array={positions} itemSize={3} />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial color={color} size={0.06} transparent depthWrite={false} />
     </points>

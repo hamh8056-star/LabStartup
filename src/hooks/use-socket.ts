@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { io, Socket } from "socket.io-client"
+import io from "socket.io-client"
 
 export type SocketUser = {
   userId: string
@@ -9,6 +9,8 @@ export type SocketUser = {
   userRole: string
   socketId: string
 }
+
+type Socket = ReturnType<typeof io>
 
 export function useSocket(roomId: string | null, userId: string, userName: string, userRole: string) {
   const [socket, setSocket] = useState<Socket | null>(null)
@@ -39,7 +41,6 @@ export function useSocket(roomId: string | null, userId: string, userName: strin
 
     newSocket.on("connect", () => {
       console.log("[Socket] ✅ Connected successfully:", newSocket.id)
-      console.log("[Socket] Transport:", newSocket.io.engine.transport.name)
       setIsConnected(true)
 
       // Rejoindre la salle
@@ -51,27 +52,27 @@ export function useSocket(roomId: string | null, userId: string, userName: strin
       })
     })
 
-    newSocket.on("disconnect", (reason) => {
+    newSocket.on("disconnect", (reason: string) => {
       console.log("[Socket] ❌ Disconnected:", reason)
       setIsConnected(false)
     })
 
-    newSocket.on("connect_error", (error) => {
+    newSocket.on("connect_error", (error: Error) => {
       console.error("[Socket] ❌ Connection error:", error.message)
       console.error("[Socket] Error details:", error)
       setIsConnected(false)
     })
 
-    newSocket.on("reconnect", (attemptNumber) => {
+    newSocket.on("reconnect", (attemptNumber: number) => {
       console.log(`[Socket] ✅ Reconnected after ${attemptNumber} attempts`)
       setIsConnected(true)
     })
 
-    newSocket.on("reconnect_attempt", (attemptNumber) => {
+    newSocket.on("reconnect_attempt", (attemptNumber: number) => {
       console.log(`[Socket] 🔄 Reconnection attempt ${attemptNumber}`)
     })
 
-    newSocket.on("reconnect_error", (error) => {
+    newSocket.on("reconnect_error", (error: Error) => {
       console.error("[Socket] ❌ Reconnection error:", error)
     })
 

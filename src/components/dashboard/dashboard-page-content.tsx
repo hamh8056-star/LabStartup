@@ -51,16 +51,16 @@ export function DashboardPageContent({
 
   const roleConfig = {
     admin: {
-      title: t("dashboard.main.roleConfig.admin.title"),
-      subtitle: t("dashboard.main.roleConfig.admin.subtitle"),
+      title: (() => { const v = t("dashboard.main.roleConfig.admin.title"); return Array.isArray(v) ? v[0] : v; })(),
+      subtitle: (() => { const v = t("dashboard.main.roleConfig.admin.subtitle"); return Array.isArray(v) ? v[0] : v; })(),
     },
     teacher: {
-      title: t("dashboard.main.roleConfig.teacher.title"),
-      subtitle: t("dashboard.main.roleConfig.teacher.subtitle"),
+      title: (() => { const v = t("dashboard.main.roleConfig.teacher.title"); return Array.isArray(v) ? v[0] : v; })(),
+      subtitle: (() => { const v = t("dashboard.main.roleConfig.teacher.subtitle"); return Array.isArray(v) ? v[0] : v; })(),
     },
     student: {
-      title: t("dashboard.main.roleConfig.student.title"),
-      subtitle: t("dashboard.main.roleConfig.student.subtitle"),
+      title: (() => { const v = t("dashboard.main.roleConfig.student.title"); return Array.isArray(v) ? v[0] : v; })(),
+      subtitle: (() => { const v = t("dashboard.main.roleConfig.student.subtitle"); return Array.isArray(v) ? v[0] : v; })(),
     },
   }
 
@@ -162,7 +162,7 @@ export function DashboardPageContent({
                     {room.members.length} {t("dashboard.main.collaborations.participants")} • {t("dashboard.main.collaborations.simulation")} {room.simulationId}
                   </p>
                   <ul className="mt-3 space-y-1 text-xs text-muted-foreground">
-                    {room.notes.map(note => (
+                    {room.notes.map((note: string) => (
                       <li key={note}>• {note}</li>
                     ))}
                   </ul>

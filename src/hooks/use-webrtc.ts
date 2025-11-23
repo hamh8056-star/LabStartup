@@ -1,7 +1,9 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import type { Socket } from "socket.io-client"
+import io from "socket.io-client"
+
+type Socket = ReturnType<typeof io>
 
 export type MediaStreamState = {
   localStream: MediaStream | null

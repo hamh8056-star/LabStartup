@@ -99,9 +99,9 @@ export async function ensureCommunityIndexes() {
 }
 
 // Discussions
-export async function listDiscussions(discipline?: string): Promise<DbDiscussionThread[]> {
+export async function listDiscussions(discipline?: "physics" | "biology" | "electronics" | "informatics"): Promise<DbDiscussionThread[]> {
   const db = await getDatabase()
-  const query = discipline ? { discipline } : {}
+  const query = discipline ? { discipline } as { discipline: "physics" | "biology" | "electronics" | "informatics" } : {}
   return db
     .collection<DbDiscussionThread>("community_discussions")
     .find(query)
@@ -224,9 +224,9 @@ export async function addDiscussionReply(data: {
 }
 
 // Projects
-export async function listProjects(discipline?: string): Promise<DbCommunityProject[]> {
+export async function listProjects(discipline?: "physics" | "biology" | "electronics" | "informatics"): Promise<DbCommunityProject[]> {
   const db = await getDatabase()
-  const query = discipline ? { discipline } : {}
+  const query = discipline ? { discipline } as { discipline: "physics" | "biology" | "electronics" | "informatics" } : {}
   return db
     .collection<DbCommunityProject>("community_projects")
     .find(query)
@@ -350,9 +350,9 @@ export async function joinContest(contestId: string, userId: string): Promise<vo
 }
 
 // Leaderboard
-export async function getLeaderboard(discipline?: string): Promise<DbLeaderboardEntry[]> {
+export async function getLeaderboard(discipline?: "physics" | "biology" | "electronics" | "informatics"): Promise<DbLeaderboardEntry[]> {
   const db = await getDatabase()
-  const query = discipline ? { discipline } : {}
+  const query = discipline ? { discipline } as { discipline: "physics" | "biology" | "electronics" | "informatics" } : {}
   return db
     .collection<DbLeaderboardEntry>("community_leaderboard")
     .find(query)

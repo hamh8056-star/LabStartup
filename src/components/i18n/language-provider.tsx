@@ -9,6 +9,7 @@ type LanguageContextValue = {
   dictionary: Dictionary
   setLocale: (locale: SupportedLocale) => void
   t: (path: string) => string | string[]
+  ts: (path: string) => string
 }
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined)
@@ -59,12 +60,26 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const dictionary = useMemo(() => DICTIONARIES[locale], [locale])
 
+  const t = useMemo(
+    () => (path: string) => resolvePath(dictionary, path),
+    [dictionary],
+  )
+
+  const ts = useMemo(
+    () => (path: string): string => {
+      const value = resolvePath(dictionary, path)
+      return Array.isArray(value) ? value[0] : value
+    },
+    [dictionary],
+  )
+
   const value = useMemo<LanguageContextValue>(() => ({
     locale,
     dictionary,
     setLocale,
-    t: path => resolvePath(dictionary, path),
-  }), [locale, dictionary])
+    t,
+    ts,
+  }), [locale, dictionary, t, ts])
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
 }

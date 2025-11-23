@@ -56,9 +56,9 @@ export function StatCards({
 
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {data.map(item => (
+      {data.map((item, index) => (
         <Card
-          key={item.label}
+          key={index}
           className="border-border/60 bg-white/70 backdrop-blur dark:bg-slate-950/70"
         >
           <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">

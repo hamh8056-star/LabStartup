@@ -14,19 +14,14 @@ const updateAssignmentSchema = z.object({
   status: z.enum(["draft", "active", "closed"]).optional(),
 })
 
-type RouteParams = {
-  params: {
-    id: string
-  }
-}
-
-export async function PATCH(request: Request, { params }: RouteParams) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await getServerSession(authOptions)
 
   // Les admins peuvent aussi accéder aux fonctionnalités enseignantes
   if (!session?.user?.id || (session.user.role !== "teacher" && session.user.role !== "admin")) {
     return NextResponse.json(
-      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session.user.role || "non défini"}.` },
+      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session?.user?.role || "non défini"}.` },
       { status: 403 }
     )
   }
@@ -45,7 +40,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   }
 
   try {
-    const updated = await updateAssignment(session.user.id, params.id, parsed.data)
+    const updated = await updateAssignment(session.user.id, id, parsed.data)
 
     if (!updated) {
       return NextResponse.json({ message: "Assignation introuvable." }, { status: 404 })
@@ -60,18 +55,19 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(_request: Request, { params }: RouteParams) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await getServerSession(authOptions)
 
   // Les admins peuvent aussi accéder aux fonctionnalités enseignantes
   if (!session?.user?.id || (session.user.role !== "teacher" && session.user.role !== "admin")) {
     return NextResponse.json(
-      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session.user.role || "non défini"}.` },
+      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session?.user?.role || "non défini"}.` },
       { status: 403 }
     )
   }
 
-  const deleted = await deleteAssignment(session.user.id, params.id)
+  const deleted = await deleteAssignment(session.user.id, id)
 
   if (!deleted) {
     return NextResponse.json({ message: "Assignation introuvable." }, { status: 404 })

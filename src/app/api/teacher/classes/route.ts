@@ -31,7 +31,7 @@ export async function GET() {
     if (session.user.role !== "teacher" && session.user.role !== "admin") {
       console.warn("[api/teacher/classes] Invalid role", { userId: session.user.id, role: session.user.role })
       return NextResponse.json(
-        { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session.user.role || "non défini"}.` },
+        { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session?.user?.role || "non défini"}.` },
         { status: 403 }
       )
     }
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
   // Les admins peuvent aussi accéder aux fonctionnalités enseignantes
   if (!session?.user?.id || (session.user.role !== "teacher" && session.user.role !== "admin")) {
     return NextResponse.json(
-      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session.user.role || "non défini"}.` },
+      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session?.user?.role || "non défini"}.` },
       { status: 403 }
     )
   }
@@ -68,7 +68,11 @@ export async function POST(request: Request) {
     )
   }
 
-  const klass = await createClass(session.user.id, parsed.data)
+  const klass = await createClass(session.user.id, {
+    ...parsed.data,
+    description: parsed.data.description ?? "",
+    studentIds: parsed.data.studentIds ?? [],
+  })
   return NextResponse.json({ class: klass }, { status: 201 })
 }
 

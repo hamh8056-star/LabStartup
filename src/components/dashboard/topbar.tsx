@@ -29,7 +29,7 @@ export function DashboardTopbar({ title, subtitle }: DashboardTopbarProps) {
         <div className="relative flex flex-1 items-center">
           <Search className="absolute left-3 size-4 text-muted-foreground" />
           <Input
-            placeholder={t("dashboard.main.topbar.searchPlaceholder")}
+            placeholder={(() => { const v = t("dashboard.main.topbar.searchPlaceholder"); return Array.isArray(v) ? v[0] : v; })()}
             className="pl-9"
           />
         </div>

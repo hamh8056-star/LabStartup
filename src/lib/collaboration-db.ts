@@ -603,6 +603,7 @@ export async function seedSampleCollaborationRooms(samples: SampleRoom[]) {
           name: member.name,
           role: member.role,
           status: member.status,
+          approved: true,
           createdAt: now,
           updatedAt: now,
         })),

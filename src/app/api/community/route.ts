@@ -44,10 +44,11 @@ export async function GET(request: Request) {
   }
 
   // Récupérer les données depuis la base de données
+  const disciplineParam = discipline as "physics" | "biology" | "electronics" | "informatics" | undefined
   const [dbDiscussions, dbProjects, dbLeaderboard, dbContests] = await Promise.all([
-    listDiscussions(discipline),
-    listProjects(discipline),
-    getLeaderboard(discipline),
+    listDiscussions(disciplineParam),
+    listProjects(disciplineParam),
+    getLeaderboard(disciplineParam),
     listContests(),
   ])
 

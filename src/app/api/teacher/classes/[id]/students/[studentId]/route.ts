@@ -31,7 +31,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   // Les admins peuvent aussi accéder aux fonctionnalités enseignantes
   if (!session?.user?.id || (session.user.role !== "teacher" && session.user.role !== "admin")) {
     return NextResponse.json(
-      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session.user.role || "non défini"}.` },
+      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session?.user?.role || "non défini"}.` },
       { status: 403 }
     )
   }
@@ -117,7 +117,7 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
   // Les admins peuvent aussi accéder aux fonctionnalités enseignantes
   if (!session?.user?.id || (session.user.role !== "teacher" && session.user.role !== "admin")) {
     return NextResponse.json(
-      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session.user.role || "non défini"}.` },
+      { message: `Accès refusé. Rôle requis: teacher ou admin, rôle actuel: ${session?.user?.role || "non défini"}.` },
       { status: 403 }
     )
   }
