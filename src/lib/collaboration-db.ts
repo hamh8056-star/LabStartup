@@ -17,6 +17,23 @@ function roomIdToString(roomId: ObjectId | string): string {
   return String(roomId)
 }
 
+/**
+ * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
+ */
+function idToString(id: ObjectId | string | undefined | null): string {
+  if (!id) {
+    return ""
+  }
+  if (typeof id === "string") {
+    return id
+  }
+  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
+    return id.toHexString()
+  }
+  // Fallback: convertir en chaîne
+  return String(id)
+}
+
 export type DbCollaborationRoom = {
   _id: ObjectId
   title: string
@@ -201,7 +218,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
   })
 
   return rooms.map(room => {
-    const roomKey = room._id.toHexString()
+    const roomKey = idToString(room._id)
     const roomMembers = membersByRoom.get(roomKey) ?? []
     const roomRequests = requestsByRoom.get(roomKey) ?? []
     
@@ -221,14 +238,14 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
         approved: member.approved ?? true, // Par défaut approuvé pour rétrocompatibilité
       })),
       pendingRequests: roomRequests.map(request => ({
-        id: request._id.toHexString(),
+        id: idToString(request._id),
         userId: request.userId,
         userName: request.userName,
         userRole: request.userRole,
         requestedAt: request.requestedAt.toISOString(),
       })),
       chatLog: (messagesByRoom.get(roomKey) ?? []).map(message => ({
-        id: message._id.toHexString(),
+        id: idToString(message._id),
         authorId: message.authorId,
         authorName: message.authorName,
         role: message.role,
@@ -236,7 +253,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
         timestamp: message.createdAt.toISOString(),
       })),
       screenShares: (sharesByRoom.get(roomKey) ?? []).map(share => ({
-        id: share._id.toHexString(),
+        id: idToString(share._id),
         ownerId: share.ownerId,
         ownerName: share.ownerName,
         type: share.type,
@@ -245,7 +262,7 @@ export async function listCollaborationRooms(): Promise<CollaborationRoomDto[]> 
         active: share.active,
       })),
       breakoutGroups: (groupsByRoom.get(roomKey) ?? []).map(group => ({
-        id: group._id.toHexString(),
+        id: idToString(group._id),
         name: group.name,
         participants: group.participants,
         active: group.active,
@@ -298,7 +315,7 @@ export async function getCollaborationMessages(roomId: string, limit: number = 1
     .toArray()
 
   return messages.map((msg) => ({
-    id: msg._id.toHexString(),
+    id: idToString(msg._id),
     authorId: msg.authorId,
     authorName: msg.authorName,
     role: msg.role,
@@ -542,7 +559,7 @@ export async function getBreakoutGroups(roomId: string) {
     .toArray()
   
   return groups.map(group => ({
-    id: group._id.toHexString(),
+    id: idToString(group._id),
     name: group.name,
     participants: group.participants,
     active: group.active,

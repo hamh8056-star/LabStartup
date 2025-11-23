@@ -1,10 +1,28 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { z } from "zod"
+import { ObjectId } from "mongodb"
 
 import { authOptions } from "@/lib/auth"
 import { createDiscussion, upvoteDiscussion } from "@/lib/community-db"
 import { ensureCommunityIndexes } from "@/lib/community-db"
+
+/**
+ * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
+ */
+function idToString(id: ObjectId | string | undefined | null): string {
+  if (!id) {
+    return ""
+  }
+  if (typeof id === "string") {
+    return id
+  }
+  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
+    return id.toHexString()
+  }
+  // Fallback: convertir en chaîne
+  return String(id)
+}
 
 const createDiscussionSchema = z.object({
   title: z.string().min(5, "Le titre doit contenir au moins 5 caractères").max(200, "Le titre ne peut pas dépasser 200 caractères"),
@@ -70,7 +88,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       discussion: {
-        id: discussion._id.toHexString(),
+        id: idToString(discussion._id),
         title: discussion.title,
         author: discussion.authorName,
         discipline: discussion.discipline,

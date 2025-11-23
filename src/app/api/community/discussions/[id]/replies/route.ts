@@ -1,9 +1,27 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { z } from "zod"
+import { ObjectId } from "mongodb"
 
 import { authOptions } from "@/lib/auth"
 import { addDiscussionReply } from "@/lib/community-db"
+
+/**
+ * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
+ */
+function idToString(id: ObjectId | string | undefined | null): string {
+  if (!id) {
+    return ""
+  }
+  if (typeof id === "string") {
+    return id
+  }
+  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
+    return id.toHexString()
+  }
+  // Fallback: convertir en chaîne
+  return String(id)
+}
 
 const replySchema = z.object({
   content: z.string().min(3).max(2000),
@@ -39,7 +57,7 @@ export async function POST(
 
     return NextResponse.json({
       reply: {
-        id: reply._id.toHexString(),
+        id: idToString(reply._id),
         author: reply.authorName,
         content: reply.content,
         createdAt: reply.createdAt.toISOString(),

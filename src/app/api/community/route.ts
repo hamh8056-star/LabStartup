@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
+import { ObjectId } from "mongodb"
 
 import { authOptions } from "@/lib/auth"
 import {
@@ -13,6 +14,23 @@ import {
 } from "@/lib/community-db"
 import { getCommunityData } from "@/lib/data/community"
 import { getDatabase } from "@/lib/mongodb"
+
+/**
+ * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
+ */
+function idToString(id: ObjectId | string | undefined | null): string {
+  if (!id) {
+    return ""
+  }
+  if (typeof id === "string") {
+    return id
+  }
+  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
+    return id.toHexString()
+  }
+  // Fallback: convertir en chaîne
+  return String(id)
+}
 
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions)
@@ -28,7 +46,7 @@ export async function GET(request: Request) {
     const replies = await getDiscussionReplies(threadId)
     return NextResponse.json({ 
       replies: replies.map(reply => ({
-        id: reply._id.toHexString(),
+        id: idToString(reply._id),
         author: reply.authorName,
         content: reply.content,
         createdAt: reply.createdAt.toISOString(),
@@ -57,7 +75,7 @@ export async function GET(request: Request) {
   
   const discussions = dbDiscussions.length > 0
     ? dbDiscussions.map(d => ({
-        id: d._id.toHexString(),
+        id: idToString(d._id),
         title: d.title,
         author: d.authorName,
         discipline: d.discipline,
@@ -73,9 +91,9 @@ export async function GET(request: Request) {
   const projects = dbProjects.length > 0
     ? await Promise.all(
         dbProjects.map(async (p) => {
-          const comments = await getProjectComments(p._id.toHexString())
+          const comments = await getProjectComments(idToString(p._id))
           return {
-            id: p._id.toHexString(),
+            id: idToString(p._id),
             title: p.title,
             disciplineLabel: p.disciplineLabel,
             author: p.authorName,
@@ -84,7 +102,7 @@ export async function GET(request: Request) {
             downloads: p.downloads,
             peerReviews: p.peerReviews,
             comments: comments.map(c => ({
-              id: c._id.toHexString(),
+              id: idToString(c._id),
               author: c.authorName,
               content: c.content,
               rating: c.rating,
@@ -112,7 +130,7 @@ export async function GET(request: Request) {
     projects,
     leaderboard,
     contests: dbContests.map(c => ({
-      id: c._id.toHexString(),
+      id: idToString(c._id),
       title: c.title || "Concours VR — Novembre 2024",
       description: c.description || "Thème : concevoir une expérience immersive simulant la photosynthèse. Prix : casque VR + certification.",
       deadline: c.deadline.toISOString(),

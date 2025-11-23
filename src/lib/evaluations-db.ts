@@ -4,6 +4,23 @@ import { getDatabase } from "@/lib/mongodb"
 import { getSampleEvaluations, type EvaluationTemplate } from "@/lib/data/evaluations"
 import { getSampleCertifications } from "@/lib/data/certifications"
 
+/**
+ * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
+ */
+function idToString(id: ObjectId | string | undefined | null): string {
+  if (!id) {
+    return ""
+  }
+  if (typeof id === "string") {
+    return id
+  }
+  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
+    return id.toHexString()
+  }
+  // Fallback: convertir en chaîne
+  return String(id)
+}
+
 export type EvaluationAttemptMode = "pre" | "post"
 
 export type EvaluationAttemptDoc = {
@@ -284,7 +301,7 @@ export async function getEvaluationHistory(evaluationId: string, options?: { pag
 
   return {
     attempts: attempts.map(attempt => ({
-      id: attempt._id.toHexString(),
+      id: idToString(attempt._id),
       mode: attempt.mode,
       score: attempt.score,
       maxScore: attempt.maxScore,

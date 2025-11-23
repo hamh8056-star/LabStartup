@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { z } from "zod"
+import { ObjectId } from "mongodb"
 
 import { authOptions } from "@/lib/auth"
 import {
@@ -22,7 +23,23 @@ import {
 } from "@/lib/collaboration-db"
 import { getSampleRooms } from "@/lib/data/collaboration"
 import { getDatabase } from "@/lib/mongodb"
-import { ObjectId } from "mongodb"
+
+/**
+ * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
+ */
+function idToString(id: ObjectId | string | undefined | null): string {
+  if (!id) {
+    return ""
+  }
+  if (typeof id === "string") {
+    return id
+  }
+  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
+    return id.toHexString()
+  }
+  // Fallback: convertir en chaîne
+  return String(id)
+}
 
 const createRoomSchema = z.object({
   title: z.string().min(4),
@@ -125,7 +142,7 @@ export async function POST(request: Request) {
     ownerName: session.user.name || parsed.data.ownerName,
   })
   const rooms = await listCollaborationRooms()
-  return NextResponse.json({ roomId: room._id.toHexString(), rooms }, { status: 201 })
+  return NextResponse.json({ roomId: idToString(room._id), rooms }, { status: 201 })
 }
 
 export async function PUT(request: Request) {
@@ -161,13 +178,13 @@ export async function PUT(request: Request) {
       if (result.type === "request_created") {
         return NextResponse.json({ 
           message: "Demande de participation envoyée. En attente d'approbation.",
-          requestId: result.request._id.toHexString(),
+          requestId: idToString(result.request._id),
           status: "pending"
         })
       } else if (result.type === "pending_request") {
         return NextResponse.json({ 
           message: "Vous avez déjà une demande en attente.",
-          requestId: result.request._id.toHexString(),
+          requestId: idToString(result.request._id),
           status: "pending"
         })
       } else if (result.type === "already_member") {
@@ -231,7 +248,7 @@ export async function PUT(request: Request) {
       // Retourner le message sauvegardé avec son ID pour que le client puisse le mettre à jour
       return NextResponse.json({
         message: {
-          id: savedMessage._id.toHexString(),
+          id: idToString(savedMessage._id),
           authorId: savedMessage.authorId,
           authorName: savedMessage.authorName,
           role: savedMessage.role,
@@ -265,7 +282,7 @@ export async function PUT(request: Request) {
       const group = await createBreakoutGroup(roomId, parsed.data)
       return NextResponse.json({
         group: {
-          id: group._id.toHexString(),
+          id: idToString(group._id),
           name: group.name,
           participants: group.participants,
           active: group.active,
@@ -289,7 +306,7 @@ export async function PUT(request: Request) {
       const group = await updateBreakoutGroup(groupId, parsed.data)
       return NextResponse.json({
         group: {
-          id: group._id.toHexString(),
+          id: idToString(group._id),
           name: group.name,
           participants: group.participants,
           active: group.active,

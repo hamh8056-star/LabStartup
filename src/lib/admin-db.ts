@@ -2,6 +2,23 @@ import { ObjectId } from "mongodb"
 import { getDatabase } from "@/lib/mongodb"
 import type { UserRole } from "@/lib/roles"
 
+/**
+ * Convertit un _id (ObjectId ou string) en chaîne de caractères de manière sécurisée
+ */
+function idToString(id: ObjectId | string | undefined | null): string {
+  if (!id) {
+    return ""
+  }
+  if (typeof id === "string") {
+    return id
+  }
+  if (id && typeof id === "object" && "toHexString" in id && typeof id.toHexString === "function") {
+    return id.toHexString()
+  }
+  // Fallback: convertir en chaîne
+  return String(id)
+}
+
 export type AdminUser = {
   _id: ObjectId
   id: string
@@ -57,7 +74,7 @@ export async function getUsers(page: number = 1, limit: number = 20, search?: st
   return {
     users: users.map(user => ({
       _id: user._id,
-      id: user._id.toHexString(),
+      id: idToString(user._id),
       name: user.name,
       email: user.email,
       role: user.role,
@@ -132,7 +149,7 @@ export async function updateUser(userId: string, updates: {
 
   return {
     _id: result._id,
-    id: result._id.toHexString(),
+    id: idToString(result._id),
     name: result.name,
     email: result.email,
     role: result.role,
