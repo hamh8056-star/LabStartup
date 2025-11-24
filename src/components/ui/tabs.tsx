@@ -13,7 +13,6 @@ function Tabs({
     <TabsPrimitive.Root
       data-slot="tabs"
       className={cn("flex flex-col gap-2", className)}
-      suppressHydrationWarning
       {...props}
     />
   )

@@ -292,7 +292,9 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
   useEffect(() => {
     if (!localStream && isConnected) {
       // Vérifier que l'API est disponible avant d'essayer
-      if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      if (typeof navigator !== 'undefined' && 
+          navigator.mediaDevices && 
+          typeof navigator.mediaDevices.getUserMedia === 'function') {
         const timer = setTimeout(() => {
           startLocalStream(true, true).catch(err => {
             console.error("[VirtualClassroom] Error starting local stream:", err)

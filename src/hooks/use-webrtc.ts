@@ -621,7 +621,7 @@ export function useWebRTC(roomId: string, userId: string, userName: string, sock
     } else if (!state.isVideoEnabled) {
       // Vérifier que l'API est disponible avant d'appeler startLocalStream
       if (typeof window === 'undefined' || typeof navigator === 'undefined' || 
-          !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
         const errorMessage = "L'accès à la caméra n'est pas disponible. " +
           "Assurez-vous d'utiliser HTTPS ou localhost."
         console.error("[WebRTC] ❌", errorMessage)
@@ -649,7 +649,7 @@ export function useWebRTC(roomId: string, userId: string, userName: string, sock
         try {
           // Vérifier que l'API est disponible
           if (typeof window === 'undefined' || typeof navigator === 'undefined' || 
-              !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+              !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
             const errorMessage = "L'accès au microphone n'est pas disponible. " +
               "Assurez-vous d'utiliser HTTPS ou localhost."
             console.error("[WebRTC] ❌", errorMessage)
@@ -717,7 +717,7 @@ export function useWebRTC(roomId: string, userId: string, userName: string, sock
       // Pas de stream local, démarrer avec audio
       // Vérifier que l'API est disponible avant d'appeler startLocalStream
       if (typeof window === 'undefined' || typeof navigator === 'undefined' || 
-          !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
         const errorMessage = "L'accès au microphone n'est pas disponible. " +
           "Assurez-vous d'utiliser HTTPS ou localhost."
         console.error("[WebRTC] ❌", errorMessage)
@@ -740,7 +740,7 @@ export function useWebRTC(roomId: string, userId: string, userName: string, sock
       }
 
       // Vérifier que l'API est disponible
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getDisplayMedia !== 'function') {
         const errorMessage = "Le partage d'écran n'est pas disponible. " +
           "Assurez-vous d'utiliser HTTPS ou localhost, et que votre navigateur supporte cette fonctionnalité."
         console.error("[WebRTC] ❌", errorMessage)
@@ -802,7 +802,7 @@ export function useWebRTC(roomId: string, userId: string, userName: string, sock
       try {
         // Vérifier que l'API est disponible
         if (typeof window === 'undefined' || typeof navigator === 'undefined' || 
-            !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
           console.warn("[WebRTC] ⚠️ Cannot restore video, API not available")
           return
         }
