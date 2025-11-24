@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { LogOut, Settings, User } from "lucide-react"
 import type { Session } from "next-auth"
@@ -22,6 +23,13 @@ type HeaderUserMenuProps = {
 }
 
 export function HeaderUserMenu({ user, variant = "default" }: HeaderUserMenuProps) {
+  const [mounted, setMounted] = useState(false)
+
+  // Éviter les erreurs d'hydratation en rendant uniquement côté client
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const initials =
     user?.name
       ?.split(" ")
@@ -29,6 +37,40 @@ export function HeaderUserMenu({ user, variant = "default" }: HeaderUserMenuProp
       .join("")
       .toUpperCase()
       .slice(0, 2) ?? "LS"
+
+  if (!mounted) {
+    // Rendre un placeholder pendant l'hydratation
+    return (
+      <Button
+        variant="outline"
+        size="icon"
+        className={
+          variant === "inverted"
+            ? "relative size-10 rounded-full border-white/70 bg-white text-primary shadow-sm transition hover:bg-white/90"
+            : "relative size-10 rounded-full border-border/60 bg-white/70 shadow-sm transition hover:shadow-md dark:bg-slate-950/80"
+        }
+        disabled
+      >
+        <Avatar
+          className={
+            variant === "inverted"
+              ? "size-10 border border-white/60 bg-white text-primary"
+              : "size-10 border border-border/40 bg-muted/40"
+          }
+        >
+          <AvatarFallback
+            className={
+              variant === "inverted"
+                ? "text-sm font-semibold uppercase text-primary"
+                : "text-sm font-semibold uppercase text-primary"
+            }
+          >
+            {initials}
+          </AvatarFallback>
+        </Avatar>
+      </Button>
+    )
+  }
 
   return (
     <DropdownMenu>

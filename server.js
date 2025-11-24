@@ -96,6 +96,7 @@ app.prepare().then(() => {
 
     // WebRTC Signaling - Offre
     socket.on("webrtc-offer", (data) => {
+      console.log(`[Socket] WebRTC offer from ${socket.id} to ${data.to}`)
       socket.to(data.to).emit("webrtc-offer", {
         from: socket.id,
         offer: data.offer,
@@ -104,6 +105,7 @@ app.prepare().then(() => {
 
     // WebRTC Signaling - Réponse
     socket.on("webrtc-answer", (data) => {
+      console.log(`[Socket] WebRTC answer from ${socket.id} to ${data.to}`)
       socket.to(data.to).emit("webrtc-answer", {
         from: socket.id,
         answer: data.answer,
@@ -112,10 +114,12 @@ app.prepare().then(() => {
 
     // WebRTC Signaling - Candidat ICE
     socket.on("webrtc-ice-candidate", (data) => {
-      socket.to(data.to).emit("webrtc-ice-candidate", {
-        from: socket.id,
-        candidate: data.candidate,
-      })
+      if (data.candidate) {
+        socket.to(data.to).emit("webrtc-ice-candidate", {
+          from: socket.id,
+          candidate: data.candidate,
+        })
+      }
     })
 
     // Autorisation d'enregistrement (enseignant uniquement)

@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Languages } from "lucide-react"
 
 import { useLanguage } from "@/components/i18n/language-provider"
@@ -18,6 +19,29 @@ type LanguageSwitcherProps = {
 
 export function LanguageSwitcher({ variant = "default", className }: LanguageSwitcherProps) {
   const { locale, setLocale } = useLanguage()
+  const [mounted, setMounted] = useState(false)
+
+  // Éviter les erreurs d'hydratation en rendant uniquement côté client
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    // Rendre un placeholder pendant l'hydratation
+    return (
+      <div
+        className={`flex items-center gap-2 text-sm ${
+          variant === "inverted" ? "text-white" : "text-muted-foreground"
+        } ${className ?? ""}`.trim()}
+      >
+        <Languages
+          className={`size-4 ${variant === "inverted" ? "text-white" : "text-muted-foreground"}`}
+          aria-hidden
+        />
+        <div className="h-9 w-[150px] rounded-md border bg-background" />
+      </div>
+    )
+  }
 
   return (
     <div

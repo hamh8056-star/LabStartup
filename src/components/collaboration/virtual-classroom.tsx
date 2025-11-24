@@ -39,10 +39,12 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
     startScreenShare,
     stopScreenShare,
     leaveRoom,
+    clearError,
   } = useWebRTC(roomId, userId, userName, socket)
 
   const localVideoRef = useRef<HTMLVideoElement>(null)
-  const [remoteVideos, setRemoteVideos] = useState<Map<string, HTMLVideoElement>>(new Map())
+  const remoteVideosRef = useRef<Map<string, HTMLVideoElement>>(new Map())
+  const [, forceUpdate] = useState({}) // Pour forcer le re-render
   const [showChat, setShowChat] = useState(true)
   const [isMinimized, setIsMinimized] = useState(false)
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
@@ -174,28 +176,135 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream
+      
+      // Vérifier que l'audio est bien dans le stream
+      const audioTracks = localStream.getAudioTracks()
+      const videoTracks = localStream.getVideoTracks()
+      
+      console.log(`[VirtualClassroom] Local stream attached:`, {
+        audioTracks: audioTracks.length,
+        videoTracks: videoTracks.length,
+        audioEnabled: audioTracks.length > 0 ? audioTracks[0].enabled : false,
+        videoEnabled: videoTracks.length > 0 ? videoTracks[0].enabled : false,
+      })
+      
+      // S'assurer que l'audio est activé
+      audioTracks.forEach(track => {
+        if (!track.enabled) {
+          console.warn(`[VirtualClassroom] ⚠️ Audio track disabled, enabling...`)
+          track.enabled = true
+        }
+      })
+      
+      // Forcer la lecture
+      localVideoRef.current.play().catch(err => {
+        console.error(`[VirtualClassroom] Error playing local video:`, err)
+      })
     }
   }, [localStream])
 
   // Attacher les streams distants aux vidéos
   useEffect(() => {
+    console.log(`[VirtualClassroom] ========== REMOTE STREAMS UPDATE ==========`)
+    console.log(`[VirtualClassroom] Remote streams count: ${remoteStreams.size}`)
+    console.log(`[VirtualClassroom] Remote stream user IDs:`, Array.from(remoteStreams.keys()))
+    
     remoteStreams.forEach((stream, userId) => {
-      const videoElement = remoteVideos.get(userId)
-      if (videoElement && videoElement.srcObject !== stream) {
-        videoElement.srcObject = stream
+      const videoTracks = stream.getVideoTracks()
+      const audioTracks = stream.getAudioTracks()
+      
+      console.log(`[VirtualClassroom] Processing stream for user ${userId}:`, {
+        streamId: stream.id,
+        active: stream.active,
+        videoTracks: videoTracks.length,
+        audioTracks: audioTracks.length,
+        tracks: stream.getTracks().map(t => ({ 
+          kind: t.kind, 
+          enabled: t.enabled, 
+          readyState: t.readyState,
+          id: t.id
+        }))
+      })
+      
+      const videoElement = remoteVideosRef.current.get(userId)
+      if (videoElement) {
+        if (videoElement.srcObject !== stream) {
+          console.log(`[VirtualClassroom] ✅ Attaching stream to video for user ${userId}`)
+          videoElement.srcObject = stream
+          // Forcer la lecture
+          videoElement.play()
+            .then(() => {
+              console.log(`[VirtualClassroom] ✅ Video playing for user ${userId}`)
+              forceUpdate({}) // Forcer le re-render
+            })
+            .catch(err => {
+              console.error(`[VirtualClassroom] ❌ Error playing video for ${userId}:`, err)
+            })
+        } else {
+          // Vérifier que les tracks sont toujours actifs
+          const currentVideoTracks = stream.getVideoTracks()
+          if (currentVideoTracks.length > 0 && !currentVideoTracks[0].enabled) {
+            console.warn(`[VirtualClassroom] ⚠️ Video track disabled for user ${userId}`)
+            forceUpdate({})
+          }
+        }
+      } else {
+        console.warn(`[VirtualClassroom] ⚠️ No video element found for user ${userId}, will attach when element is created`)
+      }
+      
+      // Écouter les changements de tracks vidéo
+      videoTracks.forEach(track => {
+        // Supprimer les anciens listeners pour éviter les doublons
+        track.onended = () => {
+          console.log(`[VirtualClassroom] Video track ended for ${userId}`)
+          forceUpdate({})
+        }
+        track.onmute = () => {
+          console.log(`[VirtualClassroom] Video track muted for ${userId}`)
+          forceUpdate({})
+        }
+        track.onunmute = () => {
+          console.log(`[VirtualClassroom] Video track unmuted for ${userId}`)
+          forceUpdate({})
+        }
+      })
+      
+      // Écouter les changements du stream
+      stream.onaddtrack = (event) => {
+        console.log(`[VirtualClassroom] Track added to stream for ${userId}:`, event.track.kind)
+        if (event.track.kind === 'video') {
+          forceUpdate({})
+        }
+      }
+      stream.onremovetrack = (event) => {
+        console.log(`[VirtualClassroom] Track removed from stream for ${userId}:`, event.track.kind)
+        if (event.track.kind === 'video') {
+          forceUpdate({})
+        }
       }
     })
-  }, [remoteStreams, remoteVideos])
+    
+    // Forcer un re-render pour mettre à jour l'affichage
+    forceUpdate({})
+  }, [remoteStreams])
 
   // Démarrer automatiquement la vidéo/audio
   useEffect(() => {
     if (!localStream && isConnected) {
-      const timer = setTimeout(() => {
-        startLocalStream(true, true)
-      }, 500) // Petit délai pour éviter les appels multiples
-      return () => clearTimeout(timer)
+      // Vérifier que l'API est disponible avant d'essayer
+      if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const timer = setTimeout(() => {
+          startLocalStream(true, true).catch(err => {
+            console.error("[VirtualClassroom] Error starting local stream:", err)
+          })
+        }, 500) // Petit délai pour éviter les appels multiples
+        return () => clearTimeout(timer)
+      } else {
+        console.warn("[VirtualClassroom] MediaDevices API not available")
+        // L'erreur sera gérée par le hook useWebRTC
+      }
     }
-  }, [isConnected, localStream]) // Retirer startLocalStream des dépendances
+  }, [isConnected, localStream, startLocalStream])
 
   // Fonction pour jouer le son de notification
   const playNotificationSound = useCallback(async () => {
@@ -666,7 +775,7 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
         let yOffset = 0
         let count = 0
         remoteStreams.forEach((stream, userId) => {
-          const videoElement = remoteVideos.get(userId)
+          const videoElement = remoteVideosRef.current.get(userId)
           if (videoElement && videoElement.videoWidth > 0) {
             const video = videoElement
             const aspectRatio = video.videoWidth / video.videoHeight
@@ -711,12 +820,19 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
       alert("Impossible de démarrer l'enregistrement. Vérifiez que votre navigateur supporte cette fonctionnalité.")
       setIsRecording(false)
     }
-  }, [recordingAuthorized, isTeacher, roomId, remoteStreams, remoteVideos, isRecording])
+  }, [recordingAuthorized, isTeacher, roomId, remoteStreams, isRecording])
 
   const remoteStreamsArray = Array.from(remoteStreams.entries())
   // Inclure tous les participants de la salle, pas seulement ceux avec des streams
   const allParticipants = roomUsers.filter(u => u.userId !== userId) // Exclure l'utilisateur local
   const totalParticipants = allParticipants.length + 1 // +1 pour l'utilisateur local
+  
+  // Compter les participants avec caméra active
+  const participantsWithVideo = allParticipants.filter(p => remoteStreams.has(p.userId)).length + (isVideoEnabled ? 1 : 0)
+  
+  console.log(`[VirtualClassroom] Total participants: ${totalParticipants}, With video: ${participantsWithVideo}`)
+  console.log(`[VirtualClassroom] Remote streams:`, Array.from(remoteStreams.keys()))
+  console.log(`[VirtualClassroom] All participants:`, allParticipants.map(p => ({ userId: p.userId, name: p.userName, hasStream: remoteStreams.has(p.userId) })))
 
   if (isMinimized) {
     return (
@@ -787,25 +903,37 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
         {/* Zone vidéo principale */}
         <div className="relative flex-1 bg-black">
           <div className={cn(
-            "grid h-full gap-2 p-2",
+            "grid h-full gap-2 p-2 auto-rows-fr",
+            // Grille adaptative comme Zoom
             totalParticipants === 1 ? "grid-cols-1" :
             totalParticipants === 2 ? "grid-cols-2" :
-            totalParticipants <= 4 ? "grid-cols-2" :
-            totalParticipants <= 9 ? "grid-cols-3" :
-            "grid-cols-4"
+            totalParticipants === 3 ? "grid-cols-2" : // 2 colonnes, 2 lignes
+            totalParticipants === 4 ? "grid-cols-2" : // 2x2
+            totalParticipants <= 6 ? "grid-cols-3" : // 3x2
+            totalParticipants <= 9 ? "grid-cols-3" : // 3x3
+            totalParticipants <= 12 ? "grid-cols-4" : // 4x3
+            totalParticipants <= 16 ? "grid-cols-4" : // 4x4
+            "grid-cols-5" // 5 colonnes pour plus de 16 participants
           )}>
             {/* Vidéo locale */}
-            <Card className="relative overflow-hidden bg-black border-2 border-primary/50">
-              <CardContent className="p-0">
-                <video
-                  ref={localVideoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="h-full w-full object-cover"
-                />
-                {!isVideoEnabled && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+            <Card className="relative overflow-hidden bg-black border-2 border-primary/50 aspect-video">
+              <CardContent className="p-0 h-full">
+                {localStream && isVideoEnabled ? (
+                  <video
+                    ref={localVideoRef}
+                    autoPlay
+                    playsInline
+                    muted={true}
+                    className="h-full w-full object-cover"
+                    onLoadedMetadata={() => {
+                      console.log(`[VirtualClassroom] Local video metadata loaded`)
+                    }}
+                    onCanPlay={() => {
+                      console.log(`[VirtualClassroom] Local video can play`)
+                    }}
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gray-900">
                     <div className="flex size-20 items-center justify-center rounded-full bg-gray-700 text-2xl font-semibold text-white">
                       {userName.charAt(0).toUpperCase()}
                     </div>
@@ -818,6 +946,7 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
                   )}
                   {!isAudioEnabled && <MicOff className="size-3 text-red-400" />}
                   {isScreenSharing && <Monitor className="size-3 text-green-400" />}
+                  {!isVideoEnabled && <VideoOff className="size-3 text-gray-400" />}
                 </div>
               </CardContent>
             </Card>
@@ -827,21 +956,54 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
               const hasStream = remoteStreams.has(remoteUser.userId)
               const stream = remoteStreams.get(remoteUser.userId)
               
+              // Vérifier si le stream a des tracks vidéo
+              const hasVideoTrack = stream && stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled
+              
+              console.log(`[VirtualClassroom] Rendering participant ${remoteUser.userName}:`, {
+                hasStream,
+                hasVideoTrack,
+                streamId: stream?.id,
+                videoTracks: stream?.getVideoTracks().length || 0
+              })
+              
               return (
-                <Card key={remoteUser.userId} className="relative overflow-hidden bg-black">
-                  <CardContent className="p-0">
-                    {hasStream && stream ? (
+                <Card key={remoteUser.userId} className="relative overflow-hidden bg-black aspect-video">
+                  <CardContent className="p-0 h-full">
+                    {hasStream && stream && hasVideoTrack ? (
                       <video
                         ref={(el) => {
                           if (el) {
-                            const newMap = new Map(remoteVideos)
-                            newMap.set(remoteUser.userId, el)
-                            setRemoteVideos(newMap)
+                            remoteVideosRef.current.set(remoteUser.userId, el)
+                            // Attacher immédiatement le stream si disponible
+                            if (el.srcObject !== stream) {
+                              console.log(`[VirtualClassroom] ✅ Attaching stream to video for ${remoteUser.userName}`)
+                              el.srcObject = stream
+                              el.play()
+                                .then(() => {
+                                  console.log(`[VirtualClassroom] ✅ Video playing for ${remoteUser.userName}`)
+                                  forceUpdate({})
+                                })
+                                .catch(err => {
+                                  console.error(`[VirtualClassroom] ❌ Error playing video for ${remoteUser.userName}:`, err)
+                                })
+                            }
+                          } else {
+                            remoteVideosRef.current.delete(remoteUser.userId)
                           }
                         }}
                         autoPlay
                         playsInline
+                        muted={false}
                         className="h-full w-full object-cover"
+                        onLoadedMetadata={() => {
+                          console.log(`[VirtualClassroom] ✅ Video metadata loaded for ${remoteUser.userName}`)
+                        }}
+                        onCanPlay={() => {
+                          console.log(`[VirtualClassroom] ✅ Video can play for ${remoteUser.userName}`)
+                        }}
+                        onError={(e) => {
+                          console.error(`[VirtualClassroom] ❌ Video error for ${remoteUser.userName}:`, e)
+                        }}
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gray-900">
@@ -857,9 +1019,9 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
                       {remoteUser.userRole === "teacher" && (
                         <Badge variant="default" className="text-[10px] px-1 py-0">Enseignant</Badge>
                       )}
-                      {!hasStream && (
+                      {!hasStream || !hasVideoTrack ? (
                         <Badge variant="outline" className="text-[10px] px-1 py-0 text-gray-400">Sans caméra</Badge>
-                      )}
+                      ) : null}
                     </div>
                   </CardContent>
                 </Card>
@@ -868,8 +1030,19 @@ export function VirtualClassroom({ roomId, userId, userName, userRole, onClose }
           </div>
 
           {error && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 rounded-lg bg-red-500 px-4 py-2 text-sm text-white shadow-lg">
-              {error}
+            <div className="absolute top-4 left-1/2 z-50 -translate-x-1/2 rounded-lg bg-red-500 px-4 py-2 text-sm text-white shadow-lg animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-center gap-2">
+                <span>{error}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearError}
+                  className="h-5 w-5 p-0 text-white hover:bg-red-600"
+                  aria-label="Fermer le message d'erreur"
+                >
+                  <X className="size-3" />
+                </Button>
+              </div>
             </div>
           )}
 

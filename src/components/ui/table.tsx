@@ -11,11 +11,11 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
       className="relative w-full overflow-x-auto -mx-4 sm:mx-0"
     >
       <div className="inline-block min-w-full align-middle px-4 sm:px-0">
-        <table
-          data-slot="table"
-          className={cn("w-full caption-bottom text-sm", className)}
-          {...props}
-        />
+      <table
+        data-slot="table"
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
       </div>
     </div>
   )

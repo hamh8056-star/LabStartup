@@ -34,22 +34,22 @@ export function DashboardTopbar({ title, subtitle }: DashboardTopbarProps) {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
+        <Tooltip>
+          <TooltipTrigger asChild>
               <Button variant="outline" size="icon" className="rounded-full shrink-0">
-                <CalendarDays className="size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{t("dashboard.main.topbar.calendarTooltip")}</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
+              <CalendarDays className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t("dashboard.main.topbar.calendarTooltip")}</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
               <Button variant="outline" size="icon" className="rounded-full shrink-0">
-                <Bell className="size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{t("dashboard.main.topbar.notificationsTooltip")}</TooltipContent>
-          </Tooltip>
+              <Bell className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t("dashboard.main.topbar.notificationsTooltip")}</TooltipContent>
+        </Tooltip>
         </div>
       </div>
     </div>

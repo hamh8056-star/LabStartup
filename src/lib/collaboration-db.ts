@@ -14,7 +14,7 @@ function roomIdToString(roomId: ObjectId | string | any): string {
     // Check if it's a MongoDB ObjectId with toHexString method
     if (typeof roomId.toHexString === "function") {
       try {
-        return roomId.toHexString()
+    return roomId.toHexString()
       } catch {
         // Fall through to other checks
       }

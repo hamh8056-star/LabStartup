@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -25,6 +26,12 @@ export function SiteHeader() {
   const {
     dictionary: { layout },
   } = useLanguage()
+  const [mounted, setMounted] = useState(false)
+
+  // Éviter les erreurs d'hydratation
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const navItems = [
     { href: "#features", label: layout.navFeatures },
@@ -76,27 +83,34 @@ export function SiteHeader() {
                 {layout.workspaceLogin}
               </Link>
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="outline" className="h-8 w-8 md:hidden">
-                  <Menu className="size-4" />
-                  <span className="sr-only">Menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44 space-y-1">
-                <DropdownMenuItem asChild>
-                  <Link href="/">{layout.navHome}</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard">{layout.navDashboard}</Link>
-                </DropdownMenuItem>
-                {status !== "authenticated" ? (
+            {mounted ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="outline" className="h-8 w-8 md:hidden">
+                    <Menu className="size-4" />
+                    <span className="sr-only">Menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44 space-y-1">
                   <DropdownMenuItem asChild>
-                    <Link href="/auth/login">{layout.navLogin}</Link>
+                    <Link href="/">{layout.navHome}</Link>
                   </DropdownMenuItem>
-                ) : null}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard">{layout.navDashboard}</Link>
+                  </DropdownMenuItem>
+                  {status !== "authenticated" ? (
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth/login">{layout.navLogin}</Link>
+                    </DropdownMenuItem>
+                  ) : null}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button size="icon" variant="outline" className="h-8 w-8 md:hidden" disabled>
+                <Menu className="size-4" />
+                <span className="sr-only">Menu</span>
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -136,24 +150,31 @@ export function SiteHeader() {
           <Button asChild size="sm" className="hidden text-xs sm:text-sm md:inline-flex">
             <Link href="/auth/login">{layout.navLogin}</Link>
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="outline" className="h-8 w-8 md:hidden">
-                <Menu className="size-4" />
-                <span className="sr-only">Menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 space-y-1">
-              {navItems.map(item => (
-                <DropdownMenuItem key={item.href} asChild>
-                  <Link href={item.href}>{item.label}</Link>
+          {mounted ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="outline" className="h-8 w-8 md:hidden">
+                  <Menu className="size-4" />
+                  <span className="sr-only">Menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 space-y-1">
+                {navItems.map(item => (
+                  <DropdownMenuItem key={item.href} asChild>
+                    <Link href={item.href}>{item.label}</Link>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuItem asChild>
+                  <Link href="/auth/register">{layout.navRegister}</Link>
                 </DropdownMenuItem>
-              ))}
-              <DropdownMenuItem asChild>
-                <Link href="/auth/register">{layout.navRegister}</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button size="icon" variant="outline" className="h-8 w-8 md:hidden" disabled>
+              <Menu className="size-4" />
+              <span className="sr-only">Menu</span>
+            </Button>
+          )}
         </div>
       </div>
     </header>
